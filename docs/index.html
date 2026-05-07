@@ -3,18 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>YCK Incident Tracker - Interactive Guide</title>
+  <title>YCK Incident Tracker - Interactive User Journey</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     .hotspot { position: relative; cursor: pointer; border: 2px solid transparent; transition: all 0.3s; }
     .hotspot:hover { border-color: #6b1010; border-radius: 8px; }
     .tooltip { display: none; position: absolute; background: white; border: 2px solid #6b1010; border-radius: 8px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 50; min-width: 300px; }
     .hotspot:hover .tooltip, .hotspot.active .tooltip { display: block; }
-    .step-highlight { animation: pulse 2s infinite; }
-    .screenshot { border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-    @keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(107, 16, 16, 0.4); } 50% { box-shadow: 0 0 0 10px rgba(107, 16, 16, 0.1); } }
+    .screenshot { border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-top: 16px; }
     .journey-tab { padding: 8px 16px; cursor: pointer; border-bottom: 2px solid transparent; }
     .journey-tab.active { border-bottom: 2px solid #6b1010; font-weight: bold; }
+    .step { display: none; }
+    .step.active { display: block; }
   </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
@@ -30,18 +30,22 @@
       </div>
       
       <div class="mt-4 flex justify-center gap-2">
-        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm" id="step-counter">Step 1 of 7</span>
+        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm" id="step-counter">Step 1 of 4</span>
       </div>
     </header>
 
     <!-- Survivor Journey -->
     <div id="survivor-journey">
+    
     <!-- Step 1: Landing Page -->
-    <section class="mb-16 hotspot" id="landing">
-      <div class="bg-white rounded-xl shadow-lg p-8 step-highlight">
+    <section class="mb-16 step active" id="survivor-step-1">
+      <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">1. Landing Page</h2>
         <p class="text-gray-600 mb-6">Survivors land on a calming page with "Protect Survivors. Empower Responders."</p>
-        <img src="screenshots/01_landing_page.png" class="screenshot w-full" alt="Landing Page">
+        <!-- TODO: Replace with actual landing page screenshot -->
+        <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400">
+          [TODO: Add Landing Page Screenshot - 01_landing_page.png]
+        </div>
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">💡 Survivor View</h4>
           <p class="text-sm">Dark gradient hero, "Report an Incident" CTA, language switcher (EN/SW), Quick Exit button top-right.</p>
@@ -50,11 +54,14 @@
     </section>
 
     <!-- Step 2: Safety Gate -->
-    <section class="mb-16 hotspot" id="safety">
+    <section class="mb-16 step" id="survivor-step-2">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">2. Safety Gate</h2>
         <p class="text-gray-600 mb-6">Mandatory consent screen before accessing the reporting form.</p>
-        <img src="screenshots/02_safety_gate.png" class="screenshot w-full" alt="Safety Gate">
+        <!-- TODO: Replace with actual safety gate screenshot -->
+        <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400">
+          [TODO: Add Safety Gate Screenshot - 02_safety_gate.png]
+        </div>
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">🔒 Trauma-Informed</h4>
           <p class="text-sm">"Your Safety Matters" warning, consent checkbox, Continue/Leave options.</p>
@@ -63,24 +70,30 @@
     </section>
 
     <!-- Step 3: Incident Form -->
-    <section class="mb-16 hotspot" id="form">
+    <section class="mb-16 step" id="survivor-step-3">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">3. Incident Report Form</h2>
         <p class="text-gray-600 mb-6">4-step wizard with large tap-friendly icon cards for incident types.</p>
-        <img src="screenshots/03_incident_form.png" class="screenshot w-full" alt="Incident Form">
+        <!-- TODO: Replace with actual incident form screenshot -->
+        <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400">
+          [TODO: Add Incident Form Screenshot - 03_incident_form.png]
+        </div>
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">📝 10 Incident Types</h4>
-          <p class="text-sm">Physical, Sexual, Emotional, Neglect, Bullying, Domestic Violence, Child Exploitation, etc.</p>
+          <p class="text-sm">Physical, Sexual, Emotional, Neglect, Bullying, Domestic Violence, Child Exploitation, Missing Child, Tech-Enabled Abuse, Other.</p>
         </div>
       </div>
     </section>
 
     <!-- Step 4: Success Page -->
-    <section class="mb-16 hotspot" id="success">
+    <section class="mb-16 step" id="survivor-step-4">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">4. Submission Success</h2>
         <p class="text-gray-600 mb-6">Confirmation with checkmark and confidentiality assurance.</p>
-        <img src="screenshots/04_success_page.png" class="screenshot w-full" alt="Success Page">
+        <!-- TODO: Replace with actual success page screenshot -->
+        <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400">
+          [TODO: Add Success Page Screenshot - 04_success_page.png]
+        </div>
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">✅ Anonymous</h4>
           <p class="text-sm">Survivors get a reference code (e.g., NT111974) but no PII is collected.</p>
@@ -91,12 +104,16 @@
 
     <!-- Admin Journey -->
     <div id="admin-journey" style="display:none;">
+    
     <!-- Step 1: Dashboard -->
-    <section class="mb-16 hotspot" id="dashboard">
-      <div class="bg-white rounded-xl shadow-lg p-8 step-highlight">
+    <section class="mb-16 step active" id="admin-step-1">
+      <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">1. Dashboard</h2>
         <p class="text-gray-600 mb-6">Personalized greeting with role badge, summary cards, incidents awaiting assignment.</p>
-        <img src="screenshots/05_dashboard.png" class="screenshot w-full" alt="Dashboard">
+        <!-- TODO: Replace with actual dashboard screenshot -->
+        <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400">
+          [TODO: Add Dashboard Screenshot - 05_dashboard.png]
+        </div>
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">📊 Quick Actions</h4>
           <p class="text-sm">Review All Incidents, Manage Users, Audit Log panels for admins.</p>
@@ -105,11 +122,14 @@
     </section>
 
     <!-- Step 2: Incidents List -->
-    <section class="mb-16 hotspot" id="incidents">
+    <section class="mb-16 step" id="admin-step-2">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">2. Incidents List</h2>
         <p class="text-gray-600 mb-6">Filterable list with status tabs (New, Assigned, In Progress, Escalated, etc.).</p>
-        <img src="screenshots/06_incidents_list.png" class="screenshot w-full" alt="Incidents List">
+        <!-- TODO: Replace with actual incidents list screenshot -->
+        <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400">
+          [TODO: Add Incidents List Screenshot - 06_incidents_list.png]
+        </div>
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">🔍 Filter & Search</h4>
           <p class="text-sm">Category icons, location, date, status badges. Click row for details.</p>
@@ -118,11 +138,14 @@
     </section>
 
     <!-- Step 3: Reports -->
-    <section class="mb-16 hotspot" id="reports">
+    <section class="mb-16 step" id="admin-step-3">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">3. Reports & Analytics</h2>
         <p class="text-gray-600 mb-6">Anonymized analytics with time-range filters, CSV export.</p>
-        <img src="screenshots/07_reports.png" class="screenshot w-full" alt="Reports Page">
+        <!-- TODO: Replace with actual reports screenshot -->
+        <div class="bg-gray-100 rounded-lg p-8 text-center text-gray-400">
+          [TODO: Add Reports Screenshot - 07_reports.png]
+        </div>
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">📊 Data Anonymization</h4>
           <p class="text-sm">All exports automatically anonymize survivor data. No PII in reports.</p>
@@ -131,7 +154,7 @@
     </section>
 
     <!-- Step 4: User Management -->
-    <section class="mb-16 hotspot" id="users">
+    <section class="mb-16 step" id="admin-step-4">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">4. User Management</h2>
         <p class="text-gray-600 mb-6">Search, filter, approve pending users, change roles, deactivate accounts.</p>
@@ -143,7 +166,7 @@
     </section>
 
     <!-- Step 5: Services Management -->
-    <section class="mb-16 hotspot" id="services">
+    <section class="mb-16 step" id="admin-step-5">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">5. Referral Services</h2>
         <p class="text-gray-600 mb-6">Full CRUD table of 44+ verified services (health facilities, police, legal aid).</p>
@@ -155,7 +178,7 @@
     </section>
 
     <!-- Step 6: Admin Manual -->
-    <section class="mb-16 hotspot" id="manual">
+    <section class="mb-16 step" id="admin-step-6">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">6. Admin Manual</h2>
         <p class="text-gray-600 mb-6">In-app documentation with sidebar navigation for all operational workflows.</p>
@@ -167,7 +190,7 @@
     </section>
 
     <!-- Step 7: Next Steps -->
-    <section class="mb-16 hotspot" id="next">
+    <section class="mb-16 step" id="admin-step-7">
       <div class="bg-gradient-to-r from-blue-900 to-purple-900 text-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">7. Next Steps for Pilot</h2>
         <div class="space-y-4">
@@ -204,66 +227,6 @@
     </section>
     </div>
 
-    <!-- Quick Exit Hotspot -->
-    <section class="mb-16 hotspot" id="safety">
-      <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">Safety & Privacy Features</h2>
-        <div class="grid md:grid-cols-3 gap-4 mb-6">
-          <div class="p-6 bg-red-50 rounded-lg text-center">
-            <div class="text-4xl mb-2">🚪</div>
-            <h3 class="font-bold">Quick Exit</h3>
-            <p class="text-sm text-gray-600">Persistent button clears session, redirects to Google</p>
-          </div>
-          <div class="p-6 bg-blue-50 rounded-lg text-center">
-            <div class="text-4xl mb-2">🔒</div>
-            <h3 class="font-bold">Safety Gate</h3>
-            <p class="text-sm text-gray-600">Consent checkbox before reporting form</p>
-          </div>
-          <div class="p-6 bg-green-50 rounded-lg text-center">
-            <div class="text-4xl mb-2">🎭</div>
-            <h3 class="font-bold">Anonymous</h3>
-            <p class="text-sm text-gray-600">No PII required for incident reporting</p>
-          </div>
-        </div>
-        <div class="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-          <p class="text-sm text-yellow-800">⚠️ <strong>Safety Note:</strong> The Quick Exit button appears on ALL pages and immediately clears sessionStorage before redirecting.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Offline Mode Hotspot -->
-    <section class="mb-16 hotspot" id="offline">
-      <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">Offline-First PWA</h2>
-        <div class="flex items-center gap-6 mb-6">
-          <div class="text-6xl">📱</div>
-          <div>
-            <h3 class="font-bold mb-2">Works Without Internet</h3>
-            <p class="text-gray-600">Submit incidents offline → Queue in localStorage → Auto-sync when connected</p>
-          </div>
-        </div>
-        <div class="space-y-3">
-          <div class="flex items-center gap-3">
-            <span class="w-8 h-8 bg-green-100 text-green-800 rounded-full flex items-center justify-center">✓</span>
-            <span>Service Worker caches app shell</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="w-8 h-8 bg-green-100 text-green-800 rounded-full flex items-center justify-center">✓</span>
-            <span>Dead-letter handling for failed syncs</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="w-8 h-8 bg-green-100 text-green-800 rounded-full flex items-center justify-center">✓</span>
-            <span>Install as PWA on mobile/desktop</span>
-          </div>
-        </div>
-        <div class="tooltip -bottom-20 left-0">
-          <h4 class="font-bold mb-2">🌍 Critical for Kenya</h4>
-          <p class="text-sm">Low-connectivity areas can still report incidents. Data syncs when back online.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
     <footer class="text-center py-8 text-gray-500">
       <p>YCK Incident Tracker - Interactive Guide</p>
       <p class="text-sm">Built for Youth Changers Kenya - Agents Assemble Healthcare AI Challenge</p>
@@ -276,170 +239,19 @@
     function showJourney(type) {
       document.getElementById('survivor-journey').style.display = type === 'survivor' ? 'block' : 'none';
       document.getElementById('admin-journey').style.display = type === 'admin' ? 'block' : 'none';
-      document.querySelectorAll('.journey-tab').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.journey-tab')[{type === 'survivor' ? 0 : 1}].classList.add('active');
-      document.getElementById('step-counter').textContent = type === 'survivor' ? 'Step 1 of 4' : 'Step 1 of 7';
-    }
-    
-    // Hotspot interaction
-    document.querySelectorAll('.hotspot').forEach(section => {
-      section.addEventListener('click', function() {
-        document.querySelectorAll('.hotspot.active').forEach(el => el.classList.remove('active'));
-        this.classList.add('active');
+      document.querySelectorAll('.journey-tab').forEach((el, idx) => {
+        el.classList.toggle('active', (type === 'survivor' && idx === 0) || (type === 'admin' && idx === 1));
       });
-    });
+      document.getElementById('step-counter').textContent = type === 'survivor' ? 'Step 1 of 4' : 'Step 1 of 7';
+      
+      // Reset to step 1
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      const firstStep = document.querySelector(`#${type}-journey .step`);
+      if (firstStep) firstStep.classList.add('active');
+    }
     
     // Initialize
     showJourney('survivor');
-  </script>
-</body>
-</html>
-          <div class="p-4 bg-blue-50 rounded-lg text-center">
-            <div class="text-2xl font-bold text-blue-800">127</div>
-            <div class="text-sm text-blue-600">Total Incidents</div>
-          </div>
-          <div class="p-4 bg-red-50 rounded-lg text-center">
-            <div class="text-2xl font-bold text-red-800">8</div>
-            <div class="text-sm text-red-600">Escalated</div>
-          </div>
-          <div class="p-4 bg-green-50 rounded-lg text-center">
-            <div class="text-2xl font-bold text-green-800">89</div>
-            <div class="text-sm text-green-600">Resolved</div>
-          </div>
-          <div class="p-4 bg-amber-50 rounded-lg text-center">
-            <div class="text-2xl font-bold text-amber-800">15</div>
-            <div class="text-sm text-amber-600">In Progress</div>
-          </div>
-        </div>
-        <p class="text-gray-600 mb-4">Generate CSV exports for donor reporting. Filter by time range: 7 days, 1 month, 3/6 months, 1 year, or custom.</p>
-        <div class="tooltip -bottom-20 left-0">
-          <h4 class="font-bold mb-2">📊 Data Anonymization</h4>
-          <p class="text-sm">All exports automatically anonymize survivor data. No PII in any reports.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Offline Mode Hotspot -->
-    <section class="mb-16 hotspot" id="offline">
-      <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">6. Offline-First PWA</h2>
-        <div class="flex items-center gap-6 mb-6">
-          <div class="text-6xl">📱</div>
-          <div>
-            <h3 class="font-bold mb-2">Works Without Internet</h3>
-            <p class="text-gray-600">Submit incidents offline → Queue in localStorage → Auto-sync when connected</p>
-          </div>
-        </div>
-        <div class="space-y-3">
-          <div class="flex items-center gap-3">
-            <span class="w-8 h-8 bg-green-100 text-green-800 rounded-full flex items-center justify-center">✓</span>
-            <span>Service Worker caches app shell</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="w-8 h-8 bg-green-100 text-green-800 rounded-full flex items-center justify-center">✓</span>
-            <span>Dead-letter handling for failed syncs</span>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="w-8 h-8 bg-green-100 text-green-800 rounded-full flex items-center justify-center">✓</span>
-            <span>Install as PWA on mobile/desktop</span>
-          </div>
-        </div>
-        <div class="tooltip -bottom-20 left-0">
-          <h4 class="font-bold mb-2">🌍 Critical for Kenya</h4>
-          <p class="text-sm">Low-connectivity areas can still report incidents. Data syncs when back online.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- User Management Hotspot -->
-    <section class="mb-16 hotspot" id="users">
-      <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">7. User Management</h2>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left">
-            <thead>
-              <tr class="border-b">
-                <th class="p-3">Email</th>
-                <th class="p-3">Role</th>
-                <th class="p-3">Status</th>
-                <th class="p-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr class="border-b">
-                <td class="p-3">admin@yck.org</td>
-                <td class="p-3"><span class="px-2 py-1 bg-red-100 text-red-800 rounded">Executive Director</span></td>
-                <td class="p-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded">Active</span></td>
-                <td class="p-3 text-sm text-blue-600">Edit</td>
-              </tr>
-              <tr class="border-b">
-                <td class="p-3">counselor@yck.org</td>
-                <td class="p-3"><span class="px-2 py-1 bg-blue-100 text-blue-800 rounded">Counselor</span></td>
-                <td class="p-3"><span class="px-2 py-1 bg-green-100 text-green-800 rounded">Active</span></td>
-                <td class="p-3 text-sm text-blue-600">Edit</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        <p class="text-sm text-gray-600 mt-4">Approve pending users, change roles, deactivate accounts. Role changes take effect immediately.</p>
-        <div class="tooltip -bottom-20 left-0">
-          <h4 class="font-bold mb-2">👥 Staff Workflow</h4>
-          <p class="text-sm">New staff sign up → Status "Pending" → Admin approves → Role assigned</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Next Steps Hotspot -->
-    <section class="mb-16 hotspot" id="next">
-      <div class="bg-gradient-to-r from-blue-900 to-purple-900 text-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">8. Next Steps for Pilot</h2>
-        <div class="space-y-4">
-          <div class="flex items-start gap-4">
-            <span class="text-2xl">🏥</span>
-            <div>
-              <h3 class="font-bold">Build Referral Database</h3>
-              <p class="text-sm opacity-90">Add 44+ verified services (health facilities, police, legal aid)</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <span class="text-2xl">🤖</span>
-            <div>
-              <h3 class="font-bold">AI Referral Matching</h3>
-              <p class="text-sm opacity-90">Integrate AI to match incidents with nearby services</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <span class="text-2xl">🌍</span>
-            <div>
-              <h3 class="font-bold">FHIR Integration</h3>
-              <p class="text-sm opacity-90">Map to Kenya MoH standards for healthcare interoperability</p>
-            </div>
-          </div>
-          <div class="flex items-start gap-4">
-            <span class="text-2xl">🏆</span>
-            <div>
-              <h3 class="font-bold">Agents Assemble Hackathon</h3>
-              <p class="text-sm opacity-90">Submit by May 11, 2026 - Demo AI + FHIR + Offline PWA</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <footer class="text-center py-8 text-gray-500">
-      <p>YCK Incident Tracker - Interactive Guide</p>
-      <p class="text-sm">Built for Youth Changers Kenya - Agents Assemble Healthcare AI Challenge</p>
-    </footer>
-  </div>
-
-  <script>
-    // Simple hotspot interaction
-    document.querySelectorAll('.hotspot').forEach(section => {
-      section.addEventListener('click', function() {
-        document.querySelectorAll('.hotspot.active').forEach(el => el.classList.remove('active'));
-        this.classList.add('active');
-      });
-    });
   </script>
 </body>
 </html>
