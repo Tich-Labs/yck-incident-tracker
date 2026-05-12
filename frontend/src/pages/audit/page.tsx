@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/empty.tsx";
 import { cn } from "@/lib/utils.ts";
 import { format } from "date-fns";
+import { usePaginatedQuery } from "@/hooks/use-supabase-query";
+import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 import {
   ScrollText,
   FilePlus,

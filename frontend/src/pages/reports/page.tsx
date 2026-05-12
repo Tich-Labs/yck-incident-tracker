@@ -18,6 +18,8 @@ import {
 } from "recharts";
 import { Download, AlertTriangle, FileText, TrendingUp, Activity } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
+import { useSupabaseQuery } from "@/hooks/use-supabase-query";
+import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 
 // ─── Label maps ──────────────────────────────────────────────────────────────
 

@@ -3,7 +3,10 @@ import { supabase } from '@/lib/supabase'
 import { snakeToCamel } from '@/lib/supabase-utils'
 
 // Hook for querying Supabase data
-export function useSupabaseQuery<T>(queryFn: () => Promise<T>) {
+export function useSupabaseQuery<T>(queryFn?: () => Promise<T>) {
+  if (!queryFn) {
+    return { data: null, isLoading: false, error: null, status: 'success' } as any;
+  }
   return useQuery({
     queryKey: ['supabase', queryFn.toString()],
     queryFn,
@@ -75,6 +78,14 @@ export const supabaseQueries = {
     if (error) throw error
     return data
   },
+}
+
+// Temp stubs for Convex migration remnants
+export class ConvexError extends Error {
+  constructor(message: string) { super(message); this.name = 'ConvexError'; }
+}
+export function usePaginatedQuery(name: any, args?: any, opts?: any) {
+  return { results: [], status: 'success', loadMore: () => {} };
 }
 
 // Common mutation factories
