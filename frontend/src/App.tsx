@@ -29,7 +29,7 @@ export default function App() {
   return (
     <DefaultProviders>
       <QuickExit />
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
         <Suspense fallback={<div></div>}>
           <Routes>
             {/* Root: redirect to saved/default locale */}
