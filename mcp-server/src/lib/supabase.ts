@@ -1,15 +1,13 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL!;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error("VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY must be set");
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  global: { fetch: fetch.bind(globalThis) },
-});
+const supabase = supabaseUrl && supabaseAnonKey
+  ? createClient(supabaseUrl, supabaseAnonKey, {
+      global: { fetch: fetch.bind(globalThis) },
+    })
+  : null;
 
 export interface Incident {
   _id: string;
@@ -39,6 +37,7 @@ export interface ReferralService {
 }
 
 export async function getIncident(id: string): Promise<Incident | null> {
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from("incidents")
     .select("*")
@@ -49,6 +48,7 @@ export async function getIncident(id: string): Promise<Incident | null> {
 }
 
 export async function getActiveServices(): Promise<ReferralService[]> {
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("referralServices")
     .select("*")
@@ -59,6 +59,7 @@ export async function getActiveServices(): Promise<ReferralService[]> {
 }
 
 export async function listIncidents(): Promise<Incident[]> {
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from("incidents")
     .select("*")
