@@ -48,14 +48,15 @@
         if (p) {
           params.delete('p');
           var qs = params.toString();
+          var base = window.location.pathname.replace(/\/+$/, '');
           window.history.replaceState(
             null, null,
-            p + (qs ? '?' + qs : '') + window.location.hash
+            base + p + (qs ? '?' + qs : '') + window.location.hash
           );
         }
       })();
     </script>
-    <link rel="apple-touch-icon" href="/icon/icon-192.png" />
+    <link rel="apple-touch-icon" href="icon/icon-192.png" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
