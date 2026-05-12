@@ -1,6 +1,6 @@
 #!/bin/bash
 # Replace all Convex imports with Supabase in the extracted project
-cd "/Users/naijeriatowett/Documents/Billion\$COnnections/yck/extracted"
+cd "/Users/naijeriatowett/Documents/Billion\$COnnections/yck/frontend"
 
 echo "=== Replacing Convex Imports ==="
 

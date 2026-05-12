@@ -4,7 +4,7 @@ set -e
 echo "=== YCK Incident Tracker - Local Setup ==="
 
 # 1. Navigate to extracted project
-cd "/Users/naijeriatowett/Documents/Billion\$COnnections/yck/extracted"
+cd "/Users/naijeriatowett/Documents/Billion\$COnnections/yck/frontend"
 
 # 2. Remove Hercules/Convex dependencies from package.json
 echo "Removing Hercules/Convex packages..."
