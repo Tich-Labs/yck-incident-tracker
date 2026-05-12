@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils.ts";
 import { formatDistanceToNow } from "date-fns";
+import { useSupabaseQuery, usePaginatedQuery } from "@/hooks/use-supabase-query";
 import {
   ClipboardPlus,
   TrendingUp,
