@@ -45,27 +45,24 @@ export function setLocaleInPath(
   search: string = "",
   hash: string = "",
 ): string {
-  // Use saved/default locale if provided locale is invalid
   const targetLocale = isSupportedLocale(locale) ? locale : SAVED_OR_DEFAULT_LOCALE;
+  const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const p = pathname.startsWith(base) ? pathname.slice(base.length) || "/" : pathname;
 
-  // Handle root path
-  if (pathname === "/") {
+  if (p === "/") {
     return `/${targetLocale}${search}${hash}`;
   }
 
-  // Split pathname into segments
-  const segments = pathname.split("/").filter(Boolean);
+  const segments = p.split("/").filter(Boolean);
   const firstSegment = segments[0];
   const firstSegmentLowercase = firstSegment?.toLowerCase();
 
-  // If first segment is a valid locale (case-insensitive), replace it
   if (firstSegmentLowercase && isSupportedLocale(firstSegmentLowercase)) {
     segments[0] = targetLocale;
     return `/${segments.join("/")}${search}${hash}`;
   }
 
-  // Otherwise, prepend the locale
-  return `/${targetLocale}${pathname}${search}${hash}`;
+  return `/${targetLocale}${p}${search}${hash}`;
 }
 
 // Utility function to change locale and update document attributes
