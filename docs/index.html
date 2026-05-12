@@ -29,8 +29,10 @@
         <div class="journey-tab" onclick="showJourney('admin')">👥 Admin Journey</div>
       </div>
       
-      <div class="mt-4 flex justify-center gap-2">
+      <div class="mt-4 flex items-center justify-center gap-4">
+        <button onclick="prevStep()" id="btn-prev" class="px-4 py-2 rounded-lg bg-white border border-gray-300 text-gray-600 hover:bg-gray-50 disabled:opacity-30 disabled:cursor-not-allowed" disabled>← Prev</button>
         <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm" id="step-counter">Step 1 of 6</span>
+        <button onclick="nextStep()" id="btn-next" class="px-4 py-2 rounded-lg bg-[#6b1010] text-white hover:bg-[#8b1010] disabled:opacity-30 disabled:cursor-not-allowed">Next →</button>
       </div>
     </header>
 
@@ -42,7 +44,7 @@
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">1. Safety Gate</h2>
         <p class="text-gray-600 mb-6">Mandatory consent screen — "Your Safety Matters" — before accessing the form.</p>
-        <img src="screenshots/survivor/01_safety_gate.png" alt="Safety Gate" class="screenshot w-full" />
+        <img src="screenshots/survivor/consent.png" alt="Safety Gate" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">🔒 Trauma-Informed</h4>
           <p class="text-sm">Consent checkbox required. "Leave Site" button exits immediately for survivor safety.</p>
@@ -55,7 +57,7 @@
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">2. Step 1 of 4 — Incident Type</h2>
         <p class="text-gray-600 mb-6">Tap-friendly icon grid with 10 incident categories. Date and time fields below.</p>
-        <img src="screenshots/survivor/02_incident_type.png" alt="Incident Type" class="screenshot w-full" />
+        <img src="screenshots/survivor/step1.png" alt="Incident Type" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">📝 10 Categories</h4>
           <p class="text-sm">Physical, Sexual, Emotional, Neglect, Bullying, Domestic Violence, Child Exploitation, Missing Child, Tech-Enabled Abuse, Other.</p>
@@ -68,7 +70,7 @@
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">3. Step 2 of 4 — Location & Description</h2>
         <p class="text-gray-600 mb-6">Where it happened and a factual description of the incident.</p>
-        <img src="screenshots/survivor/03_location.png" alt="Location and Description" class="screenshot w-full" />
+        <img src="screenshots/survivor/step2.png" alt="Location and Description" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">📍 No GPS Required</h4>
           <p class="text-sm">Free-text location — area, sub-location, or landmark. 180-char description limit.</p>
@@ -81,7 +83,7 @@
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">4. Step 3 of 4 — Survivor Info</h2>
         <p class="text-gray-600 mb-6">Age group and gender only — no names or identifying details collected.</p>
-        <img src="screenshots/survivor/04_survivor_info.png" alt="Survivor Info" class="screenshot w-full" />
+        <img src="screenshots/survivor/step3.png" alt="Survivor Info" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">🛡️ Fully Anonymized</h4>
           <p class="text-sm">Warning banner: "Do NOT record the survivor's name, ID number, or contact details."</p>
@@ -94,7 +96,7 @@
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">5. Step 4 of 4 — Review & Submit</h2>
         <p class="text-gray-600 mb-6">Summary of all entered details before final submission. Optional reference code and email.</p>
-        <img src="screenshots/survivor/05_review_submit.png" alt="Review and Submit" class="screenshot w-full" />
+        <img src="screenshots/survivor/steps4.png" alt="Review and Submit" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">🔁 Memorable Reference Code</h4>
           <p class="text-sm">Initials + birth month + year (e.g. NT111974) creates a code survivors can remember without writing down.</p>
@@ -107,7 +109,7 @@
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">6. Report Submitted</h2>
         <p class="text-gray-600 mb-6">Confirmation screen with unique reference ID and next-steps guide.</p>
-        <img src="screenshots/survivor/06_success.png" alt="Success Page" class="screenshot w-full" />
+        <img src="screenshots/survivor/submission_confimred.png" alt="Success Page" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">✅ What Happens Next</h4>
           <p class="text-sm">Review → Assign counselor → PFA initiated → Escalate if urgent. All within 24 hours.</p>
@@ -240,22 +242,39 @@
   </div>
 
   <script>
-    // Journey toggle
+    const journeySteps = { survivor: 6, admin: 7 };
+    let currentJourney = 'survivor';
+    let currentStep = 1;
+
     function showJourney(type) {
+      currentJourney = type;
+      currentStep = 1;
       document.getElementById('survivor-journey').style.display = type === 'survivor' ? 'block' : 'none';
       document.getElementById('admin-journey').style.display = type === 'admin' ? 'block' : 'none';
       document.querySelectorAll('.journey-tab').forEach((el, idx) => {
         el.classList.toggle('active', (type === 'survivor' && idx === 0) || (type === 'admin' && idx === 1));
       });
-      document.getElementById('step-counter').textContent = type === 'survivor' ? 'Step 1 of 6' : 'Step 1 of 7';
-      
-      // Reset to step 1
-      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-      const firstStep = document.querySelector(`#${type}-journey .step`);
-      if (firstStep) firstStep.classList.add('active');
+      renderStep();
     }
-    
-    // Initialize
+
+    function renderStep() {
+      const total = journeySteps[currentJourney];
+      document.querySelectorAll(`#${currentJourney}-journey .step`).forEach((s, idx) => {
+        s.classList.toggle('active', idx + 1 === currentStep);
+      });
+      document.getElementById('step-counter').textContent = `Step ${currentStep} of ${total}`;
+      document.getElementById('btn-prev').disabled = currentStep === 1;
+      document.getElementById('btn-next').disabled = currentStep === total;
+    }
+
+    function nextStep() {
+      if (currentStep < journeySteps[currentJourney]) { currentStep++; renderStep(); window.scrollTo(0,0); }
+    }
+
+    function prevStep() {
+      if (currentStep > 1) { currentStep--; renderStep(); window.scrollTo(0,0); }
+    }
+
     showJourney('survivor');
   </script>
 </body>
