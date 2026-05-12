@@ -3,11 +3,14 @@
   "version": "1.0.0",
   "description": "MCP server for YCK Incident Tracker - FHIR, referral matching, risk assessment",
   "type": "module",
+  "engines": {
+    "node": ">=22.0.0"
+  },
   "scripts": {
     "dev": "node --env-file=.env --import tsx/esm --watch src/index.ts",
     "dev:http": "MCP_TRANSPORT=http node --env-file=.env --import tsx/esm --watch src/index.ts",
     "start": "node --env-file=.env --import tsx/esm src/index.ts",
-    "start:http": "MCP_TRANSPORT=http node --env-file=.env --import tsx/esm src/index.ts",
+    "start:http": "MCP_TRANSPORT=http node --import tsx/esm src/index.ts",
     "build": "tsc",
     "inspect": "npx @modelcontextprotocol/inspector node --env-file=.env --import tsx/esm src/index.ts"
   },
