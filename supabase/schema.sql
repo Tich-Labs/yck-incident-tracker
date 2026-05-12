@@ -115,6 +115,9 @@ CREATE POLICY "Staff can read all users" ON users
 CREATE POLICY "Anyone can create incidents" ON incidents
   FOR INSERT WITH CHECK (true);
 
+CREATE POLICY "Anyone can read own submitted incident" ON incidents
+  FOR SELECT USING (submitted_by IS NULL OR submitted_by = auth.uid());
+
 CREATE POLICY "Staff can read all incidents" ON incidents
   FOR SELECT USING (
     auth.jwt() ->> 'role' IN ('volunteer', 'counselor', 'program_lead', 'executive_director')
