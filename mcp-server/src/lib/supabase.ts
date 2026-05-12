@@ -9,7 +9,7 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  realtime: { transport: ws } as unknown as Parameters<typeof createClient>[2]["realtime"],
+  realtime: { transport: ws } as unknown as NonNullable<Parameters<typeof createClient>[2]>["realtime"],
   global: { fetch: fetch.bind(globalThis) },
 });
 
