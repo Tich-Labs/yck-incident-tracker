@@ -1,5 +1,4 @@
 import { createClient } from "@supabase/supabase-js";
-import ws from "ws";
 
 const supabaseUrl = process.env.VITE_SUPABASE_URL!;
 const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY!;
@@ -9,8 +8,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  realtime: { transport: ws } as any,
   global: { fetch: fetch.bind(globalThis) },
 });
 
