@@ -30,61 +30,87 @@
       </div>
       
       <div class="mt-4 flex justify-center gap-2">
-        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm" id="step-counter">Step 1 of 4</span>
+        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm" id="step-counter">Step 1 of 6</span>
       </div>
     </header>
 
     <!-- Survivor Journey -->
     <div id="survivor-journey">
-    
-    <!-- Step 1: Landing Page -->
+
+    <!-- Step 1: Safety Gate -->
     <section class="mb-16 step active" id="survivor-step-1">
       <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">1. Landing Page</h2>
-        <p class="text-gray-600 mb-6">Survivors land on a calming page with "Protect Survivors. Empower Responders."</p>
-        <img src="screenshots/01_landing_page.png" alt="Landing Page" class="screenshot w-full" />
-        <div class="tooltip -bottom-20 left-0">
-          <h4 class="font-bold mb-2">💡 Survivor View</h4>
-          <p class="text-sm">Dark gradient hero, "Report an Incident" CTA, language switcher (EN/SW), Quick Exit button top-right.</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- Step 2: Safety Gate -->
-    <section class="mb-16 step" id="survivor-step-2">
-      <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">2. Safety Gate</h2>
-        <p class="text-gray-600 mb-6">Mandatory consent screen before accessing the reporting form.</p>
-        <img src="screenshots/02_safety_gate.png" alt="Safety Gate" class="screenshot w-full" />
+        <h2 class="text-2xl font-bold mb-4">1. Safety Gate</h2>
+        <p class="text-gray-600 mb-6">Mandatory consent screen — "Your Safety Matters" — before accessing the form.</p>
+        <img src="screenshots/survivor/01_safety_gate.png" alt="Safety Gate" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">🔒 Trauma-Informed</h4>
-          <p class="text-sm">"Your Safety Matters" warning, consent checkbox, Continue/Leave options.</p>
+          <p class="text-sm">Consent checkbox required. "Leave Site" button exits immediately for survivor safety.</p>
         </div>
       </div>
     </section>
 
-    <!-- Step 3: Incident Form -->
-    <section class="mb-16 step" id="survivor-step-3">
+    <!-- Step 2: Incident Type -->
+    <section class="mb-16 step" id="survivor-step-2">
       <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">3. Incident Report Form</h2>
-        <p class="text-gray-600 mb-6">4-step wizard with large tap-friendly icon cards for incident types.</p>
-        <img src="screenshots/03_incident_form.png" alt="Incident Form" class="screenshot w-full" />
+        <h2 class="text-2xl font-bold mb-4">2. Step 1 of 4 — Incident Type</h2>
+        <p class="text-gray-600 mb-6">Tap-friendly icon grid with 10 incident categories. Date and time fields below.</p>
+        <img src="screenshots/survivor/02_incident_type.png" alt="Incident Type" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
-          <h4 class="font-bold mb-2">📝 10 Incident Types</h4>
+          <h4 class="font-bold mb-2">📝 10 Categories</h4>
           <p class="text-sm">Physical, Sexual, Emotional, Neglect, Bullying, Domestic Violence, Child Exploitation, Missing Child, Tech-Enabled Abuse, Other.</p>
         </div>
       </div>
     </section>
 
-    <!-- Step 4: Success Page -->
+    <!-- Step 3: Location & Description -->
+    <section class="mb-16 step" id="survivor-step-3">
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold mb-4">3. Step 2 of 4 — Location & Description</h2>
+        <p class="text-gray-600 mb-6">Where it happened and a factual description of the incident.</p>
+        <img src="screenshots/survivor/03_location.png" alt="Location and Description" class="screenshot w-full" />
+        <div class="tooltip -bottom-20 left-0">
+          <h4 class="font-bold mb-2">📍 No GPS Required</h4>
+          <p class="text-sm">Free-text location — area, sub-location, or landmark. 180-char description limit.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 4: Survivor Info -->
     <section class="mb-16 step" id="survivor-step-4">
       <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">4. Submission Success</h2>
-        <p class="text-gray-600 mb-6">Confirmation with checkmark and confidentiality assurance.</p>
-        <img src="screenshots/04_success_page.png" alt="Success Page" class="screenshot w-full" />
+        <h2 class="text-2xl font-bold mb-4">4. Step 3 of 4 — Survivor Info</h2>
+        <p class="text-gray-600 mb-6">Age group and gender only — no names or identifying details collected.</p>
+        <img src="screenshots/survivor/04_survivor_info.png" alt="Survivor Info" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
-          <h4 class="font-bold mb-2">✅ Anonymous</h4>
-          <p class="text-sm">Survivors get a reference code (e.g., NT111974) but no PII is collected.</p>
+          <h4 class="font-bold mb-2">🛡️ Fully Anonymized</h4>
+          <p class="text-sm">Warning banner: "Do NOT record the survivor's name, ID number, or contact details."</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 5: Review & Submit -->
+    <section class="mb-16 step" id="survivor-step-5">
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold mb-4">5. Step 4 of 4 — Review & Submit</h2>
+        <p class="text-gray-600 mb-6">Summary of all entered details before final submission. Optional reference code and email.</p>
+        <img src="screenshots/survivor/05_review_submit.png" alt="Review and Submit" class="screenshot w-full" />
+        <div class="tooltip -bottom-20 left-0">
+          <h4 class="font-bold mb-2">🔁 Memorable Reference Code</h4>
+          <p class="text-sm">Initials + birth month + year (e.g. NT111974) creates a code survivors can remember without writing down.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 6: Success -->
+    <section class="mb-16 step" id="survivor-step-6">
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold mb-4">6. Report Submitted</h2>
+        <p class="text-gray-600 mb-6">Confirmation screen with unique reference ID and next-steps guide.</p>
+        <img src="screenshots/survivor/06_success.png" alt="Success Page" class="screenshot w-full" />
+        <div class="tooltip -bottom-20 left-0">
+          <h4 class="font-bold mb-2">✅ What Happens Next</h4>
+          <p class="text-sm">Review → Assign counselor → PFA initiated → Escalate if urgent. All within 24 hours.</p>
         </div>
       </div>
     </section>
@@ -221,7 +247,7 @@
       document.querySelectorAll('.journey-tab').forEach((el, idx) => {
         el.classList.toggle('active', (type === 'survivor' && idx === 0) || (type === 'admin' && idx === 1));
       });
-      document.getElementById('step-counter').textContent = type === 'survivor' ? 'Step 1 of 4' : 'Step 1 of 7';
+      document.getElementById('step-counter').textContent = type === 'survivor' ? 'Step 1 of 6' : 'Step 1 of 7';
       
       // Reset to step 1
       document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
