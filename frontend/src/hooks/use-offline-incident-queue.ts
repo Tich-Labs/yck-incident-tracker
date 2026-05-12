@@ -111,16 +111,16 @@ export function useOfflineIncidentQueue() {
     for (const item of eligible) {
       try {
         await createIncident.mutateAsync({
-          incidentDate: item.incidentDate,
-          incidentTime: item.incidentTime,
-          incidentType: item.incidentType,
+          incident_date: item.incidentDate,
+          incident_time: item.incidentTime,
+          incident_type: item.incidentType,
           location: item.location,
           description: item.description,
           notes: item.notes,
-          survivorAgeGroup: item.survivorAgeGroup,
-          survivorGender: item.survivorGender,
-          submitterContact: item.submitterContact,
-          offlineId: item.offlineId,
+          survivor_age_group: item.survivorAgeGroup,
+          survivor_gender: item.survivorGender,
+          submitter_contact: item.submitterContact,
+          offline_id: item.offlineId,
         });
 
         // Remove successfully synced item immediately and persist

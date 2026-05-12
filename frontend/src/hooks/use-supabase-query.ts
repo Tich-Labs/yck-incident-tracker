@@ -1,11 +1,22 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
+import { snakeToCamel } from '@/lib/supabase-utils'
 
 // Hook for querying Supabase data
 export function useSupabaseQuery<T>(queryFn: () => Promise<T>) {
   return useQuery({
     queryKey: ['supabase', queryFn.toString()],
     queryFn,
+  })
+}
+
+export function useSupabaseQueryCamel<T>(queryFn: () => Promise<any>) {
+  return useQuery({
+    queryKey: ['supabase', queryFn.toString()],
+    queryFn: async () => {
+      const data = await queryFn()
+      return snakeToCamel<T>(data)
+    },
   })
 }
 
@@ -42,14 +53,14 @@ export const supabaseQueries = {
     const { data, error } = await supabase
       .from('users')
       .select('*')
-      .order('createdAt', { ascending: false })
+      .order('created_at', { ascending: false })
     if (error) throw error
     return data
   },
   
   listServices: async () => {
     const { data, error } = await supabase
-      .from('referralServices')
+      .from('referral_services')
       .select('*')
       .order('name', { ascending: true })
     if (error) throw error
@@ -60,7 +71,7 @@ export const supabaseQueries = {
     const { data, error } = await supabase
       .from('incidents')
       .select('*')
-      .order('createdAt', { ascending: false })
+      .order('created_at', { ascending: false })
     if (error) throw error
     return data
   },

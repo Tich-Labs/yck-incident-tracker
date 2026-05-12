@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils.ts";
 import { OfflineBanner } from "@/components/offline-banner.tsx";
 import { InstallPrompt } from "@/components/install-prompt.tsx";
 import { useOfflineIncidentQueue } from "@/hooks/use-offline-incident-queue.ts";
+import { useSupabaseQueryCamel, supabaseQueries } from "@/hooks/use-supabase-query";
 import { useTranslation } from "react-i18next";
 import LocaleSwitcher from "@/components/locale-switcher.tsx";
 import {
@@ -53,7 +54,7 @@ function AppLayoutInner() {
   const { lng } = useParams<{ lng: string }>();
   const { t } = useTranslation("common");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const user = useSupabaseQuery();
+  const { data: user } = useSupabaseQueryCamel(supabaseQueries.getCurrentUser);
   const { queueCount, deadCount, syncQueue } = useOfflineIncidentQueue();
 
   const visibleNav = navItems.filter((item) =>

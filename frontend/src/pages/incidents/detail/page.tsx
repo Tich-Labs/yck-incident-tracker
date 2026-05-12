@@ -35,8 +35,10 @@ import {
   ScrollText,
 } from "lucide-react";
 import AIRecommendations from "@/components/ai-recommendations.tsx";
-import { useSupabaseQuery, useSupabaseMutation, supabaseMutations } from "@/hooks/use-supabase-query";
+import { useSupabaseQuery, useSupabaseQueryCamel, useSupabaseMutation, supabaseMutations } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase";
+import { snakeToCamel } from "@/lib/supabase-utils";
+import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   new: { label: "New", className: "bg-blue-100 text-blue-800 border-blue-200" },
   assigned: { label: "Assigned", className: "bg-purple-100 text-purple-800 border-purple-200" },
@@ -380,26 +382,6 @@ function WorkflowPanel({
     }
   };
 
-  const doAssign = async () => {
-    if (!selectedUser || selectedUser === "none") {
-      toast.error("Please select a counselor");
-      return;
-    }
-    setBusy(true);
-    try {
-      await assignIncident.mutateAsync({
-        incidentId,
-        assignedTo: selectedUser as string,
-      });
-      setSelectedUser("none");
-      toast.success("Incident assigned successfully");
-    } catch {
-      toast.error("Failed to assign incident");
-    } finally {
-      setBusy(false);
-    }
-  };
-
   const doAddNote = async () => {
     if (!note.trim()) { toast.error("Please enter a note"); return; }
     setBusy(true);
@@ -470,9 +452,9 @@ function WorkflowPanel({
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="none">Select a counselor</SelectItem>
-                    {counselors.map((c) => (
-                      <SelectItem key={c._id} value={c._id}>
-                        {c.name ?? c.email ?? c._id} ({c.role.replace("_", " ")})
+                    {counselors.map((c: any) => (
+                      <SelectItem key={c.id} value={c.id}>
+                        {c.name ?? c.email ?? c.id} ({c.role?.replace("_", " ")})
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -567,13 +549,13 @@ function WorkflowPanel({
 
 function IncidentDetailInner({ incidentId }: { incidentId: string }) {
   const navigate = useNavigate();
-  const { data: incident } = useSupabaseQuery(
+  const { data: incident } = useSupabaseQueryCamel(
     async () => {
       const { data } = await supabase.from('incidents').select('*').eq('id', incidentId).single();
       return data;
     }
   );
-  const { data: user } = useSupabaseQuery(
+  const { data: user } = useSupabaseQueryCamel(
     async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return null;
@@ -581,7 +563,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
       return data;
     }
   );
-  const { data: services } = useSupabaseQuery(
+  const { data: services } = useSupabaseQueryCamel(
     async () => {
       const { data } = await supabase.from('referral_services').select('*').order('name');
       return data ?? [];
@@ -743,7 +725,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
         {/* Timestamps */}
         <div className="px-4">
           <p className="text-xs text-muted-foreground">
-            Logged {format(new Date(incident._creationTime), "MMM d, yyyy 'at' h:mm a")}
+            Logged {format(new Date(incident.createdAt), "MMM d, yyyy 'at' h:mm a")}
           </p>
         </div>
       </div>

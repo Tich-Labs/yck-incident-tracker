@@ -6,7 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { SignInButton } from "@/components/ui/signin.tsx";
 import { cn } from "@/lib/utils.ts";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
-import { useSupabaseQuery } from "@/hooks/use-supabase-query";
+import { useSupabaseQueryCamel } from "@/hooks/use-supabase-query";
+import { supabaseQueries } from "@/hooks/use-supabase-query";
 import { formatDistanceToNow } from "date-fns";
 import {
   AlertTriangle,
@@ -89,13 +90,13 @@ const STATUS_TABS: { value: StatusFilter; label: string }[] = [
 ];
 
 type IncidentItem = {
-  _id: string;
+  id: string;
   incidentType: string;
   location: string;
   status: string;
   isEscalated: boolean;
   incidentDate: string;
-  _creationTime: number;
+  createdAt: string;
 };
 
 function IncidentRow({ incident }: { incident: IncidentItem }) {
@@ -105,7 +106,7 @@ function IncidentRow({ incident }: { incident: IncidentItem }) {
 
   return (
     <button
-      onClick={() => navigate(`/incidents/${incident._id}`)}
+      onClick={() => navigate(`/incidents/${incident.id}`)}
       className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left border-b border-border last:border-0"
     >
       <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">
@@ -126,7 +127,7 @@ function IncidentRow({ incident }: { incident: IncidentItem }) {
           <span className="whitespace-nowrap">{incident.incidentDate}</span>
           <span>·</span>
           <span className="whitespace-nowrap">
-            {formatDistanceToNow(new Date(incident._creationTime), { addSuffix: true })}
+            {formatDistanceToNow(new Date(incident.createdAt), { addSuffix: true })}
           </span>
         </div>
       </div>
@@ -153,13 +154,9 @@ function IncidentListInner() {
       ? {}
       : { status: statusFilter as Exclude<StatusFilter, "all"> };
 
-  const { results, status, loadMore } = usePaginatedQuery(
-    null,
-    queryArgs,
-    { initialNumItems: 20 }
-  );
+  const { data: results, status } = useSupabaseQueryCamel(supabaseQueries.listIncidents);
 
-  const { data: user } = useSupabaseQuery(supabaseQueries.listIncidents);
+  const { data: user } = useSupabaseQueryCamel(supabaseQueries.listUsers);
 
   return (
     <div className="pb-8">
@@ -174,7 +171,7 @@ function IncidentListInner() {
                 : "All logged incidents"}
             </p>
           </div>
-          {user?.role && user.role !== "pending" && (
+          {user?.role && user.role !== "pending" && results && (
             <Badge variant="secondary" className="text-xs capitalize">
               {results.length} shown
             </Badge>
@@ -204,7 +201,7 @@ function IncidentListInner() {
 
       {/* List */}
       <div>
-        {status === "LoadingFirstPage" ? (
+        {status === "pending" ? (
           <div>
             {[1, 2, 3, 4, 5].map((i) => (
               <div key={i} className="flex items-center gap-3 px-4 py-3.5 border-b border-border">
@@ -217,7 +214,7 @@ function IncidentListInner() {
               </div>
             ))}
           </div>
-        ) : results.length === 0 ? (
+        ) : !results || results.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
             <div className="w-14 h-14 rounded-full bg-muted flex items-center justify-center mb-4">
               <ShieldCheck className="h-7 w-7 text-muted-foreground/50" />
@@ -229,16 +226,9 @@ function IncidentListInner() {
           </div>
         ) : (
           <>
-            {results.map((incident) => (
-              <IncidentRow key={incident._id} incident={incident as IncidentItem} />
+            {(results || []).map((incident) => (
+              <IncidentRow key={incident.id} incident={incident as IncidentItem} />
             ))}
-            {status === "CanLoadMore" && (
-              <div className="px-4 py-4 text-center">
-                <Button variant="secondary" size="sm" onClick={() => loadMore(20)}>
-                  Load More
-                </Button>
-              </div>
-            )}
           </>
         )}
       </div>
