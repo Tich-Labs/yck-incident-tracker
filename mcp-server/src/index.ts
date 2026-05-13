@@ -168,19 +168,19 @@ async function main() {
       if (req.url === "/debug") {
         const { getActiveServices } = await import("./lib/supabase.js");
         const services = await getActiveServices();
-        const maskedKey = process.env.VITE_SUPABASE_ANON_KEY
-          ? process.env.VITE_SUPABASE_ANON_KEY.slice(0, 12) + "..."
-          : process.env.SUPABASE_ANON_KEY
-          ? process.env.SUPABASE_ANON_KEY.slice(0, 12) + "..."
-          : "NOT SET";
+        const raw: Record<string, string> = {};
+        for (const k of Object.keys(process.env)) {
+          if (k.includes("SUPABASE") || k.includes("VITE_") || k.includes("API_KEY") || k.includes("OPENAI") || k.includes("MCP_") || k.includes("NODE_")) {
+            const v = process.env[k] ?? "undefined";
+            raw[k] = v.length > 0 ? `${v.slice(0, 12)}... (len=${v.length})` : `EMPTY STRING (len=0)`;
+          }
+        }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({
-          supabaseUrl: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "NOT SET",
-          supabaseAnonKey: maskedKey,
-          nodeEnv: process.env.NODE_ENV || "not set",
+          nodeVersion: process.version,
+          raw,
           servicesCount: services.length,
           serviceNames: services.map((s) => s.name),
-          envKeys: Object.keys(process.env).filter(k => k.includes("SUPABASE") || k.includes("VITE_") || k.includes("API_KEY") || k.includes("OPENAI") || k.includes("MCP_")),
         }, null, 2));
         return;
       }
