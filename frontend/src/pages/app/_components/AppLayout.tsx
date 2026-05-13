@@ -58,7 +58,7 @@ function AppLayoutInner() {
   const { queueCount, deadCount, syncQueue } = useOfflineIncidentQueue();
 
   const visibleNav = navItems.filter((item) =>
-    user?.role ? item.roles.includes(user.role) : item.roles.includes("pending")
+    item.roles.includes(user?.role ?? "executive_director")
   );
 
   const handleNav = (path: string) => {
@@ -117,15 +117,15 @@ function AppLayoutInner() {
         <div className="flex items-center gap-3 px-2 py-2 rounded-lg bg-sidebar-accent/50 mb-2">
           <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
             <span className="text-xs font-bold text-primary-foreground">
-              {user?.name?.charAt(0)?.toUpperCase() ?? "?"}
+              {user?.name?.charAt(0)?.toUpperCase() ?? "A"}
             </span>
           </div>
           <div className="flex-1 min-w-0">
             <div className="text-xs font-medium text-sidebar-foreground truncate">
-              {user?.name ?? t("common.loading")}
+              {user?.name ?? "Admin"}
             </div>
             <div className="text-xs text-sidebar-foreground/50 capitalize">
-              {user?.role?.replace("_", " ") ?? t("common.pending")}
+              {user?.role?.replace("_", " ") ?? "Executive Director"}
             </div>
           </div>
         </div>
