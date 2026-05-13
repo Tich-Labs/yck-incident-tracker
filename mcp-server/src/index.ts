@@ -19,7 +19,24 @@ import { AssessRiskInput, assessRiskSmart } from "./tools/assess-risk.js";
 function createMCPServer(): Server {
   const srv = new Server(
     { name: "yck-incident-tracker", version: "1.0.0" },
-    { capabilities: { tools: {} } }
+    {
+      capabilities: {
+        tools: {},
+        extensions: {
+          "ai.promptopinion/fhir-context": {
+            scopes: [
+              { name: "patient/Observation.rs" },
+              { name: "patient/Observation.write" },
+              { name: "patient/Patient.rs" },
+              { name: "patient/ServiceRequest.rs" },
+              { name: "patient/ServiceRequest.write" },
+              { name: "patient/Consent.write" },
+              { name: "patient/Location.rs" },
+            ],
+          },
+        },
+      },
+    }
   );
 
   srv.setRequestHandler(ListToolsRequestSchema, async () => ({
