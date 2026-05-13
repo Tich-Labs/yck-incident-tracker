@@ -4,7 +4,7 @@ import { assessRiskSmart } from "./tools/assess-risk.js";
 import { generateFHIRBundle } from "./tools/generate-fhir.js";
 
 const PORT = parseInt(process.env.PORT ?? "3001", 10);
-const API_KEY = process.env.MCP_API_KEY ?? "yck-dev-key-2026";
+const API_KEY = process.env.MCP_API_KEY ?? "";
 
 const server = http.createServer(async (req, res) => {
   res.setHeader("Content-Type", "application/json");

@@ -27,3 +27,10 @@ coverage/
 # Archives
 *.tar.gz
 *.zip
+
+# Data exports (Convex snapshot — not used with Supabase)
+db_export/
+
+# Sub-project env files for safety
+mcp-server/.env
+frontend/.env.local

@@ -23,7 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.t
 import { toast } from "sonner";
 import { cn } from "@/lib/utils.ts";
 import { formatDistanceToNow } from "date-fns";
-import { useSupabaseQuery, useSupabaseMutation } from "@/hooks/use-supabase-query";
+import { useSupabaseQueryCamel, supabaseQueries, supabaseMutations, ConvexError } from "@/hooks/use-supabase-query";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 import {
   Users,
@@ -52,12 +52,12 @@ type UserRole =
   | "pending";
 
 type UserRecord = {
-  _id: string;
+  id: string;
   name?: string;
   email?: string;
   role: UserRole;
   isActive: boolean;
-  _creationTime: number;
+  created_at?: string;
 };
 
 const ROLE_CONFIG: Record<
@@ -186,13 +186,13 @@ function PendingUserCard({
   onApprove,
 }: {
   user: UserRecord;
-  onApprove: (userId: Id<"users">, role: UserRole) => Promise<void>;
+  onApprove: (userId: string, role: UserRole) => Promise<void>;
 }) {
   const [busy, setBusy] = useState(false);
 
   const handleQuickApprove = async (role: UserRole) => {
     setBusy(true);
-    await onApprove(user._id, role);
+    await onApprove(user.id, role);
     setBusy(false);
   };
 
@@ -211,7 +211,7 @@ function PendingUserCard({
             </div>
           )}
           <p className="text-xs text-muted-foreground mt-0.5">
-            Joined {formatDistanceToNow(new Date(user._creationTime), { addSuffix: true })}
+            Joined {user.created_at ? formatDistanceToNow(new Date(user.created_at), { addSuffix: true }) : "recently"}
           </p>
         </div>
       </div>
@@ -302,21 +302,21 @@ function UserRow({
   onDeactivateRequest,
 }: {
   user: UserRecord;
-  currentUserId: Id<"users"> | undefined;
+  currentUserId: string | undefined;
   onDeactivateRequest: (user: UserRecord) => void;
 }) {
   const [roleValue, setRoleValue] = useState<UserRole>(user.role);
   const [busy, setBusy] = useState(false);
-  const updateRole = useSupabaseMutation();
-  const toggleActive = useSupabaseMutation();
-  const isSelf = currentUserId === user._id;
+  const updateRole = useSupabaseMutation(supabaseMutations.updateUserRole);
+  const toggleActive = useSupabaseMutation(supabaseMutations.toggleUserActive);
+  const isSelf = currentUserId === user.id;
 
   const handleRoleChange = async (newRole: string) => {
     const role = newRole as UserRole;
     setRoleValue(role);
     setBusy(true);
     try {
-      await updateRole({ userId: user._id, role });
+      await updateRole({ userId: user.id, role });
       toast.success(`Role updated to ${ROLE_CONFIG[role]?.label ?? role}`);
     } catch (err) {
       setRoleValue(user.role);
@@ -333,7 +333,7 @@ function UserRow({
   const handleReactivate = async () => {
     setBusy(true);
     try {
-      await toggleActive({ userId: user._id });
+      await toggleActive({ userId: user.id });
       toast.success("User reactivated");
     } catch (err) {
       if (err instanceof ConvexError) {
@@ -383,7 +383,7 @@ function UserRow({
           )}
           <div className="flex items-center gap-1 text-xs text-muted-foreground mt-0.5">
             <Clock className="h-3 w-3 flex-shrink-0" />
-            Joined {formatDistanceToNow(new Date(user._creationTime), { addSuffix: true })}
+            Joined {user.created_at ? formatDistanceToNow(new Date(user.created_at), { addSuffix: true }) : "recently"}
           </div>
         </div>
       </div>
@@ -452,10 +452,10 @@ function UsersInner() {
   const [search, setSearch] = useState("");
   const [deactivateTarget, setDeactivateTarget] = useState<UserRecord | null>(null);
 
-  const users = useSupabaseQuery();
-  const currentUser = useSupabaseQuery();
-  const updateRole = useSupabaseMutation();
-  const toggleActive = useSupabaseMutation();
+  const { data: users, isLoading: usersLoading } = useSupabaseQueryCamel(supabaseQueries.listUsers);
+  const { data: currentUser } = useSupabaseQueryCamel(supabaseQueries.getCurrentUser);
+  const updateRole = useSupabaseMutation(supabaseMutations.updateUserRole);
+  const toggleActive = useSupabaseMutation(supabaseMutations.toggleUserActive);
 
   const pendingUsers = (users ?? []).filter((u) => u.role === "pending");
   const nonPendingUsers = (users ?? []).filter((u) => u.role !== "pending");
@@ -475,7 +475,7 @@ function UsersInner() {
 
   const activeCount = nonPendingUsers.filter((u) => u.isActive).length;
 
-  const handleQuickApprove = async (userId: Id<"users">, role: UserRole) => {
+  const handleQuickApprove = async (userId: string, role: UserRole) => {
     try {
       await updateRole({ userId, role });
       toast.success(`User approved as ${ROLE_CONFIG[role].label}`);
@@ -491,7 +491,7 @@ function UsersInner() {
   const handleConfirmDeactivate = async () => {
     if (!deactivateTarget) return;
     try {
-      await toggleActive({ userId: deactivateTarget._id });
+      await toggleActive({ userId: deactivateTarget.id });
       toast.success(`${deactivateTarget.name ?? "User"} deactivated`);
     } catch (err) {
       if (err instanceof ConvexError) {
@@ -570,7 +570,7 @@ function UsersInner() {
             <div>
               {pendingUsers.map((u) => (
                 <PendingUserCard
-                  key={u._id}
+                  key={u.id}
                   user={u as UserRecord}
                   onApprove={(id, role) => handleQuickApprove(id, role)}
                 />
@@ -643,9 +643,9 @@ function UsersInner() {
         ) : (
           filteredUsers.map((u) => (
             <UserRow
-              key={u._id}
+              key={u.id}
               user={u as UserRecord}
-              currentUserId={currentUser?._id as Id<"users"> | undefined}
+              currentUserId={currentUser?.id}
               onDeactivateRequest={setDeactivateTarget}
             />
           ))

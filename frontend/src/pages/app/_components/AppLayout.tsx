@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils.ts";
 import { OfflineBanner } from "@/components/offline-banner.tsx";
 import { InstallPrompt } from "@/components/install-prompt.tsx";
 import { useOfflineIncidentQueue } from "@/hooks/use-offline-incident-queue.ts";
+import AiAssistant from "@/components/ai-assistant";
 import { useSupabaseQueryCamel, supabaseQueries } from "@/hooks/use-supabase-query";
 import { useTranslation } from "react-i18next";
 import LocaleSwitcher from "@/components/locale-switcher.tsx";
@@ -85,25 +86,25 @@ function AppLayoutInner() {
             <div className="text-sm font-bold text-sidebar-foreground leading-tight">
               Youth Changers
             </div>
-            <div className="text-xs text-sidebar-foreground/50">Kenya</div>
+            <div className="text-sm text-sidebar-foreground/70">Kenya</div>
           </div>
         </div>
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 px-2 py-4 space-y-1 overflow-y-auto">
+      <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {visibleNav.map((item) => (
           <button
             key={`${item.path}-${item.labelKey}`}
             onClick={() => handleNav(item.path)}
             className={cn(
-              "w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left cursor-pointer",
+              "w-full flex items-center gap-3 px-3 py-3 rounded-lg text-[15px] font-medium transition-colors text-left cursor-pointer",
               isActive(item.path)
                 ? "bg-sidebar-primary text-sidebar-primary-foreground"
                 : "text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-foreground"
             )}
           >
-            <item.icon className="h-4 w-4 flex-shrink-0" />
+            <item.icon className="h-5 w-5 flex-shrink-0" />
             {t(item.labelKey)}
           </button>
         ))}
@@ -114,26 +115,26 @@ function AppLayoutInner() {
         <div className="mb-2">
           <LocaleSwitcher className="w-full justify-start text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent" />
         </div>
-        <div className="flex items-center gap-3 px-2 py-2 rounded-lg bg-sidebar-accent/50 mb-2">
-          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
-            <span className="text-xs font-bold text-primary-foreground">
+        <div className="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-sidebar-accent/50 mb-2">
+          <div className="w-9 h-9 rounded-full bg-primary flex items-center justify-center flex-shrink-0">
+            <span className="text-sm font-bold text-primary-foreground">
               {user?.name?.charAt(0)?.toUpperCase() ?? "A"}
             </span>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-medium text-sidebar-foreground truncate">
+            <div className="text-sm font-medium text-sidebar-foreground truncate">
               {user?.name ?? "Admin"}
             </div>
-            <div className="text-xs text-sidebar-foreground/50 capitalize">
+            <div className="text-sm text-sidebar-foreground/70 capitalize">
               {user?.role?.replace("_", " ") ?? "Executive Director"}
             </div>
           </div>
         </div>
         <button
           onClick={() => removeUser()}
-          className="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-sidebar-foreground/50 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors cursor-pointer"
+          className="w-full flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent transition-colors cursor-pointer"
         >
-          <LogOut className="h-3.5 w-3.5" />
+          <LogOut className="h-4 w-4" />
           {t("nav.signOut")}
         </button>
       </div>
@@ -207,6 +208,9 @@ function AppLayoutInner() {
 
       {/* PWA install prompt */}
       <InstallPrompt />
+
+      {/* AI Assistant floating button */}
+      <AiAssistant />
     </div>
   );
 }
