@@ -36,10 +36,10 @@ type NavItem = {
 
 const navItems: NavItem[] = [
   { path: "dashboard", labelKey: "nav.dashboard", icon: LayoutDashboard, roles: ["volunteer", "counselor", "program_lead", "executive_director", "pending"] },
-  { path: "incidents/new", labelKey: "nav.logIncident", icon: ClipboardPlus, roles: ["volunteer", "counselor", "program_lead", "executive_director"] },
+  { path: "incidents/new", labelKey: "nav.logIncident", icon: ClipboardPlus, roles: ["volunteer"] },
   { path: "incidents", labelKey: "nav.myIncidents", icon: ListFilter, roles: ["volunteer"] },
   { path: "incidents", labelKey: "nav.allIncidents", icon: ListFilter, roles: ["counselor", "program_lead", "executive_director"] },
-  { path: "referral", labelKey: "nav.findHelp", icon: Heart, roles: ["volunteer", "counselor", "program_lead", "executive_director"] },
+  { path: "referral", labelKey: "nav.findHelp", icon: Heart, roles: ["volunteer"] },
   { path: "reports", labelKey: "nav.reports", icon: BarChart2, roles: ["program_lead", "executive_director"] },
   { path: "audit", labelKey: "nav.auditLog", icon: ScrollText, roles: ["program_lead", "executive_director"] },
   { path: "users", labelKey: "nav.users", icon: Users, roles: ["program_lead", "executive_director"] },
