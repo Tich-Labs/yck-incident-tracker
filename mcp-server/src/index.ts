@@ -166,8 +166,6 @@ async function main() {
 
       // Debug — always shows key info without auth
       if (req.url === "/debug") {
-        const { getActiveServices } = await import("./lib/supabase.js");
-        const services = await getActiveServices();
         const raw: Record<string, string> = {};
         for (const k of Object.keys(process.env)) {
           if (k.includes("SUPABASE") || k.includes("VITE_") || k.includes("API_KEY") || k.includes("OPENAI") || k.includes("MCP_") || k.includes("NODE_")) {
@@ -175,12 +173,32 @@ async function main() {
             raw[k] = v.length > 0 ? `${v.slice(0, 12)}... (len=${v.length})` : `EMPTY STRING (len=0)`;
           }
         }
+        let servicesCount = -1;
+        let serviceNames: string[] = [];
+        let error: string | null = null;
+        let llmInfo: string | null = null;
+        try {
+          const { getActiveServices } = await import("./lib/supabase.js");
+          const services = await getActiveServices();
+          servicesCount = services.length;
+          serviceNames = services.map((s) => s.name);
+        } catch (e: unknown) {
+          error = String(e);
+          if (e instanceof Error && e.stack) error += "\n" + e.stack;
+        }
+        try {
+          const { getLLMConfig } = await import("./lib/llm.js");
+          const cfg = getLLMConfig();
+          llmInfo = cfg ? `${cfg.provider} (${cfg.model})` : "none (keyword matching)";
+        } catch { /* ignore */ }
         res.writeHead(200, { "Content-Type": "application/json" });
         res.end(JSON.stringify({
           nodeVersion: process.version,
           raw,
-          servicesCount: services.length,
-          serviceNames: services.map((s) => s.name),
+          llm: llmInfo,
+          servicesCount,
+          serviceNames,
+          error,
         }, null, 2));
         return;
       }

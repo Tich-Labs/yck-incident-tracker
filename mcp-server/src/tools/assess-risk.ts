@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getOpenAI, hasOpenAI } from "../lib/openai.js";
+import { getLLM, hasLLM, getLLMConfig } from "../lib/llm.js";
 
 export const AssessRiskInput = z.object({
   incidentType: z.string().describe("Type of incident"),
@@ -153,8 +153,9 @@ export async function assessRisk(input: AssessRiskInput): Promise<RiskAssessment
 }
 
 export async function assessRiskAI(input: AssessRiskInput): Promise<RiskAssessment> {
-  const openai = getOpenAI();
-  if (!openai) {
+  const llm = getLLM();
+  const llmConfig = getLLMConfig();
+  if (!llm || !llmConfig) {
     return assessRisk(input);
   }
 
@@ -173,13 +174,13 @@ Return a JSON object with:
 - factors (array of strings explaining risk factors)
 - recommendedActions (array of strings with actionable steps)`;
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+  const response = await llm.chat.completions.create({
+    model: llmConfig.model,
     messages: [
       { role: "system", content: "You are a GBV risk assessment specialist. Return only valid JSON." },
       { role: "user", content: prompt },
     ],
-    response_format: { type: "json_object" },
+    response_format: llmConfig.provider === "ollama" ? undefined : { type: "json_object" },
     temperature: 0.3,
   });
 
@@ -188,7 +189,7 @@ Return a JSON object with:
 }
 
 export async function assessRiskSmart(input: AssessRiskInput): Promise<RiskAssessment> {
-  if (hasOpenAI()) {
+  if (hasLLM()) {
     return assessRiskAI(input);
   }
   return assessRisk(input);

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { getOpenAI, hasOpenAI } from "../lib/openai.js";
+import { getLLM, hasLLM, getLLMConfig } from "../lib/llm.js";
 import { getActiveServices, type ReferralService } from "../lib/supabase.js";
 
 export const MatchServicesInput = z.object({
@@ -143,8 +143,9 @@ export async function matchServices(input: MatchServicesInput): Promise<ServiceM
 }
 
 export async function matchServicesAI(input: MatchServicesInput): Promise<ServiceMatch[]> {
-  const openai = getOpenAI();
-  if (!openai) {
+  const llm = getLLM();
+  const llmConfig = getLLMConfig();
+  if (!llm || !llmConfig) {
     return matchServices(input);
   }
 
@@ -174,13 +175,13 @@ Task: Match the incident to the most appropriate services. Consider:
 
 Return a JSON array of matches with: serviceId, name, category, county, description, relevanceScore (0-100), and reasoning. Max ${input.limit ?? 5} results.`;
 
-  const response = await openai.chat.completions.create({
-    model: "gpt-4o-mini",
+  const response = await llm.chat.completions.create({
+    model: llmConfig.model,
     messages: [
       { role: "system", content: "You are a GBV referral matching specialist. Return only valid JSON arrays." },
       { role: "user", content: prompt },
     ],
-    response_format: { type: "json_object" },
+    response_format: llmConfig.provider === "ollama" ? undefined : { type: "json_object" },
     temperature: 0.3,
   });
 
@@ -195,7 +196,7 @@ Return a JSON array of matches with: serviceId, name, category, county, descript
 }
 
 export async function matchServicesSmart(input: MatchServicesInput): Promise<ServiceMatch[]> {
-  if (hasOpenAI()) {
+  if (hasLLM()) {
     return matchServicesAI(input);
   }
   return matchServices(input);
