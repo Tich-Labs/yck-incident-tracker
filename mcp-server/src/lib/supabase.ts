@@ -1,13 +1,11 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "https://fytspbolszccphbdmyzi.supabase.co";
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZ5dHNwYm9sc3pjY3BoYmRteXppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzgzNDE5NzYsImV4cCI6MjA5MzkxNzk3Nn0.EW7rWSrB_mPy-Jhp_jWK_dmZHUd6iR63mgrVEg79qeM";
 
-const supabase = supabaseUrl && supabaseAnonKey
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      global: { fetch: fetch.bind(globalThis) },
-    })
-  : null;
+const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+  global: { fetch: fetch.bind(globalThis) },
+});
 
 export interface Incident {
   _id: string;
