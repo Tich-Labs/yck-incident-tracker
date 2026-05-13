@@ -1,7 +1,7 @@
 import { createClient } from "@supabase/supabase-js";
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY;
+const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
+const supabaseAnonKey = process.env.VITE_SUPABASE_ANON_KEY || process.env.SUPABASE_ANON_KEY;
 
 const supabase = supabaseUrl && supabaseAnonKey
   ? createClient(supabaseUrl, supabaseAnonKey, {
@@ -50,9 +50,9 @@ export async function getIncident(id: string): Promise<Incident | null> {
 export async function getActiveServices(): Promise<ReferralService[]> {
   if (!supabase) return [];
   const { data, error } = await supabase
-    .from("referralServices")
+    .from("referral_services")
     .select("*")
-    .eq("isActive", true)
+    .eq("is_active", true)
     .order("name");
   if (error) return [];
   return data as unknown as ReferralService[];
@@ -63,7 +63,7 @@ export async function listIncidents(): Promise<Incident[]> {
   const { data, error } = await supabase
     .from("incidents")
     .select("*")
-    .order("_creationTime", { ascending: false });
+    .order("created_at", { ascending: false });
   if (error) return [];
   return data as unknown as Incident[];
 }
