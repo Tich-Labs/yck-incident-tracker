@@ -164,6 +164,27 @@ async function main() {
         return;
       }
 
+      // Debug — always shows key info without auth
+      if (req.url === "/debug") {
+        const { getActiveServices } = await import("./lib/supabase.js");
+        const services = await getActiveServices();
+        const maskedKey = process.env.VITE_SUPABASE_ANON_KEY
+          ? process.env.VITE_SUPABASE_ANON_KEY.slice(0, 12) + "..."
+          : process.env.SUPABASE_ANON_KEY
+          ? process.env.SUPABASE_ANON_KEY.slice(0, 12) + "..."
+          : "NOT SET";
+        res.writeHead(200, { "Content-Type": "application/json" });
+        res.end(JSON.stringify({
+          supabaseUrl: process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL || "NOT SET",
+          supabaseAnonKey: maskedKey,
+          nodeEnv: process.env.NODE_ENV || "not set",
+          servicesCount: services.length,
+          serviceNames: services.map((s) => s.name),
+          envKeys: Object.keys(process.env).filter(k => k.includes("SUPABASE") || k.includes("VITE_") || k.includes("API_KEY") || k.includes("OPENAI") || k.includes("MCP_")),
+        }, null, 2));
+        return;
+      }
+
       // API key validation
       if (apiKey) {
         const incoming = req.headers["x-api-key"];
