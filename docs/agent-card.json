@@ -1,9 +1,9 @@
 {
   "name": "YCK SGBV Agent",
   "description": "Trauma-informed SGBV incident triage, referral matching, risk assessment, and FHIR-interoperable case management for youth protection in Kenya. Designed for counselors, volunteers, and program leads responding to gender-based violence.",
-  "url": "https://yck-tracker.example.com/a2a",
+  "url": "https://yck-incident-tracker-production.up.railway.app/",
   "version": "1.0.0",
-  "documentation_url": "https://yck.ke/docs/agent",
+  "documentation_url": "https://tich-labs.github.io/yck-incident-tracker/docs/",
   "capabilities": {
     "extensions": [
       {
@@ -118,7 +118,7 @@
   },
   "defaultInputMimeType": "application/json",
   "tags": ["sgbv", "youth-protection", "kenya", "trauma-informed", "fhir", "referral-matching"],
-  "agent_origin": "https://yck.ke",
+  "agent_origin": "https://yck-incident-tracker-production.up.railway.app",
   "privacy_policy_url": "https://yck.ke/privacy",
   "terms_of_service_url": "https://yck.ke/terms"
 }
