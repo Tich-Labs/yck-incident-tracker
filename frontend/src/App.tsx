@@ -23,12 +23,18 @@ import AdminServicesPage from "./pages/admin/services/page.tsx";
 import { useServiceWorker } from "@/hooks/use-service-worker.ts";
 import QuickExit from "@/components/quick-exit.tsx";
 
+const SurvivorLayout = () => (
+  <>
+    <QuickExit />
+    <Outlet />
+  </>
+);
+
 export default function App() {
   useServiceWorker();
 
   return (
     <DefaultProviders>
-      <QuickExit />
       <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
         <Suspense fallback={<div></div>}>
           <Routes>
@@ -50,12 +56,14 @@ export default function App() {
                 </LocaleWrapper>
               }
             >
-              {/* Public routes */}
-              <Route index element={<Index />} />
-              <Route path="incidents/safety" element={<SafetyGatePage />} />
-              <Route path="incidents/new" element={<NewIncidentPage />} />
-              <Route path="incidents/success" element={<IncidentSuccessPage />} />
-              <Route path="referral" element={<ReferralDirectoryPage />} />
+              {/* Public routes (survivor-facing, with Quick Exit button) */}
+              <Route element={<SurvivorLayout />}>
+                <Route index element={<Index />} />
+                <Route path="incidents/safety" element={<SafetyGatePage />} />
+                <Route path="incidents/new" element={<NewIncidentPage />} />
+                <Route path="incidents/success" element={<IncidentSuccessPage />} />
+                <Route path="referral" element={<ReferralDirectoryPage />} />
+              </Route>
 
               {/* Authenticated app shell */}
               <Route element={<AppLayout />}>
