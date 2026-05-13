@@ -158,10 +158,15 @@ async function main() {
       }
 
       if (req.url === "/mcp" || req.url === "/") {
-        // Create a fresh server instance per request (stateless HTTP mode requires this)
+        // MCP Streamable HTTP requires Accept to include both json and event-stream
+        const accept = req.headers.accept || "";
+        if (!accept.includes("text/event-stream") || !accept.includes("application/json")) {
+          req.headers.accept = "application/json, text/event-stream";
+        }
+
         const mcpServer = createMCPServer();
         const transport = new StreamableHTTPServerTransport({
-          sessionIdGenerator: undefined, // stateless mode
+          sessionIdGenerator: undefined,
         });
         await mcpServer.connect(transport);
         await transport.handleRequest(req, res);

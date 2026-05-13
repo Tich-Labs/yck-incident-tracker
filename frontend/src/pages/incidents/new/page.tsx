@@ -589,18 +589,19 @@ export default function NewIncidentPage() {
 
     try {
       const offlineId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-      const incidentId = await createIncident.mutateAsync({
-        incidentDate: form.incidentDate,
-        incidentTime: form.incidentTime || undefined,
-        incidentType: form.incidentType,
+      const data = await createIncident.mutateAsync({
+        incident_date: form.incidentDate,
+        incident_time: form.incidentTime || undefined,
+        incident_type: form.incidentType,
         location: form.location,
         description: form.description,
         notes: form.notes || undefined,
-        survivorAgeGroup: form.survivorAgeGroup,
-        survivorGender: form.survivorGender,
-        submitterContact: form.submitterContact || undefined,
-        offlineId,
+        survivor_age_group: form.survivorAgeGroup,
+        survivor_gender: form.survivorGender,
+        submitter_contact: form.submitterContact || undefined,
+        offline_id: offlineId,
       });
+      const incidentId = (data as { id: string }).id;
 
       // Authenticated users go to dashboard; anonymous reporters go to success page
       const isAuthenticated = !authLoading && user != null;

@@ -67,9 +67,13 @@ function matchServices(
 
       const svcCounty = String(svc.county ?? "").toLowerCase();
       const loc = location.toLowerCase();
+      const isKakamega = loc.includes("kakamega") || loc.includes("kakam") || loc.includes("kikam");
+      const isVihiga = loc.includes("vihiga");
 
-      if (svcCounty === "kakamega" && loc.includes("kakamega")) score += 30;
-      else if (svcCounty === "vihiga" && loc.includes("vihiga")) score += 30;
+      if (svcCounty === "kakamega" && isKakamega) score += 50;
+      else if (svcCounty === "vihiga" && isVihiga) score += 50;
+      else if (svcCounty === "kakamega" && isVihiga) score -= 30;
+      else if (svcCounty === "vihiga" && isKakamega) score -= 30;
       else if (loc.includes("nairobi")) score += 10;
 
       const recommendedCategories = INCIDENT_TYPE_CATEGORY_MAP[incidentType] ?? [];
