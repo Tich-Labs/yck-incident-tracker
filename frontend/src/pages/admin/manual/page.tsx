@@ -59,6 +59,7 @@ type SectionId =
   | "offline"
   | "architecture"
   | "roadmap"
+  | "ai-assistant"
   | "support";
 
 const SECTIONS: { id: SectionId; label: string; icon: React.ElementType }[] = [
@@ -74,6 +75,7 @@ const SECTIONS: { id: SectionId; label: string; icon: React.ElementType }[] = [
   { id: "offline", label: "Offline Mode", icon: WifiOff },
   { id: "architecture", label: "Architecture", icon: Database },
   { id: "roadmap", label: "Roadmap", icon: Map },
+  { id: "ai-assistant", label: "AI Assistant", icon: Sparkles },
   { id: "support", label: "Support", icon: HelpCircle },
 ];
 
@@ -301,9 +303,9 @@ function SectionOverview() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "Total Pages", value: "12" },
+            { label: "Total Pages", value: "13" },
             { label: "Public Pages", value: "5" },
-            { label: "Admin Pages", value: "7" },
+            { label: "Admin Pages", value: "8" },
             { label: "Languages", value: "2 (EN/SW)" },
           ].map(({ label, value }) => (
             <div key={label} className="text-center">
@@ -313,135 +315,9 @@ function SectionOverview() {
           ))}
         </div>
       </div>
-
-      {/* Divider before system overview */}
-      <div className="border-t border-border pt-8 mb-6">
-        <h3 className="text-sm font-semibold mb-1 flex items-center gap-2">
-          <BookOpen className="h-4 w-4 text-primary" />
-          System Overview
-        </h3>
-        <p className="text-xs text-muted-foreground mb-4">What YCK Tracker does and who it's for</p>
-      </div>
-
-      <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-        The <strong>Youth Changers Kenya (YCK) Incident Tracker</strong> is a secure, mobile-first
-        platform for logging, managing, and reporting child protection incidents. It supports
-        anonymous public reporting as well as role-based staff workflows for case management.
-      </p>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-        {[
-          { icon: ClipboardPlus, title: "Anonymous Reporting", desc: "Anyone can log an incident — no account needed." },
-          { icon: ShieldCheck, title: "Privacy & Safety", desc: "Quick Exit, consent screen, and data minimisation." },
-          { icon: RefreshCw, title: "Offline-First", desc: "Works without internet — syncs when reconnected." },
-          { icon: Eye, title: "Audit Trail", desc: "Every action logged — who, what, when." },
-          { icon: Mail, title: "Email Alerts", desc: "Automated notifications for new, assigned, and escalated cases." },
-          { icon: BarChart2, title: "Reports & Export", desc: "Aggregated, anonymized data for donor reporting." },
-        ].map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="flex items-start gap-3 p-4 rounded-xl border border-border bg-card">
-            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-              <Icon className="h-4 w-4 text-primary" />
-            </div>
-            <div>
-              <p className="text-sm font-semibold">{title}</p>
-              <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <h3 className="text-sm font-semibold mb-3">Typical workflow</h3>
-      <div className="flex flex-col gap-0 text-sm mb-6">
-        {[
-          "Incident is reported (by volunteer, staff, or anonymous public)",
-          "Program Lead assigns it to a Counselor",
-          "Counselor conducts PFA and updates status",
-          "If serious, incident is escalated to senior staff",
-          "Case is resolved or closed with notes",
-          "Program Lead exports reports for donors",
-        ].map((step, i) => (
-          <div key={i} className="flex items-start gap-2 py-2 border-b border-border last:border-0">
-            <ArrowRight className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
-            <span className="text-muted-foreground text-xs leading-relaxed">{step}</span>
-          </div>
-        ))}
-      </div>
-
-      {/* User Journey Visualization */}
-      <h3 className="text-sm font-semibold mb-4">User Journeys</h3>
-
-      {/* Public User Journey */}
-      <div className="mb-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">Public Reporter</p>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {[
-            "Landing Page",
-            "Safety Gate",
-            "Step 1: Category",
-            "Step 2: Location",
-            "Step 3: Survivor Info",
-            "Step 4: Description",
-            "Success",
-          ].map((step, i, arr) => (
-            <div key={i} className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-primary/10 border border-primary/20">
-                <CircleDot className="h-3 w-3 text-primary flex-shrink-0" />
-                <span className="text-xs font-medium text-primary whitespace-nowrap">{step}</span>
-              </div>
-              {i < arr.length - 1 && <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Staff Journey */}
-      <div className="mb-5">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">Staff (Counselor / Program Lead)</p>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {[
-            "Sign In",
-            "Dashboard",
-            "Assign / Review",
-            "Update Status",
-            "Close / Escalate",
-            "Export Report",
-          ].map((step, i, arr) => (
-            <div key={i} className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-orange-100 border border-orange-200">
-                <CircleDot className="h-3 w-3 text-orange-600 flex-shrink-0" />
-                <span className="text-xs font-medium text-orange-800 whitespace-nowrap">{step}</span>
-              </div>
-              {i < arr.length - 1 && <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />}
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Admin Journey */}
-      <div className="mb-2">
-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">Admin (Executive Director)</p>
-        <div className="flex flex-wrap items-center gap-1.5">
-          {[
-            "Manage Users",
-            "Manage Services",
-            "View Audit Log",
-            "Generate Reports",
-          ].map((step, i, arr) => (
-            <div key={i} className="flex items-center gap-1.5">
-              <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-purple-100 border border-purple-200">
-                <CircleDot className="h-3 w-3 text-purple-600 flex-shrink-0" />
-                <span className="text-xs font-medium text-purple-800 whitespace-nowrap">{step}</span>
-              </div>
-              {i < arr.length - 1 && <ArrowRight className="h-3 w-3 text-muted-foreground flex-shrink-0" />}
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }
-
-// ─── Section: Super Admin Setup ───────────────────────────────────────────────
 
 function SectionSuperAdminSetup() {
   return (
@@ -1557,12 +1433,29 @@ const WALKTHROUGH_SCREENS: WalkthroughScreen[] = [
     description:
       "In-app documentation with comprehensive guides for all system features.",
     features: [
-      "Sidebar navigation with 13 sections",
+      "Sidebar navigation with 14 sections",
       "System Overview with feature cards and workflow",
       "User Journey visualization",
       "Role Hierarchy with permissions breakdown",
       "Development Roadmap (4 phases with progress tracking)",
+      "AI Assistant usage guide",
       "Troubleshooting FAQ section",
+    ],
+  },
+  {
+    title: "AI Assistant",
+    path: "/en/admin/manual",
+    audience: "admin",
+    icon: Sparkles,
+    description:
+      "AI-powered floating assistant available on all admin pages. Uses Groq/Llama 3.3 70B (free tier) for intelligent referral matching, risk assessment, and FHIR bundle generation.",
+    features: [
+      "Floating bot button (bottom-right, every admin page)",
+      "Find Services: AI matches incidents to referral services with scores and reasoning",
+      "Assess Risk: severity scoring (0-100) with urgency, factors, recommended actions",
+      "Generate FHIR: produces FHIR R4 transaction bundles for EHR interoperability",
+      "MCP Connected badge in panel header",
+      "No cost — uses Groq free tier, falls back to keyword matching if unavailable",
     ],
   },
 ];
@@ -1700,9 +1593,9 @@ function SectionDemoWalkthrough() {
         </div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           {[
-            { label: "Total Pages", value: "12" },
+            { label: "Total Pages", value: "13" },
             { label: "Public Pages", value: "5" },
-            { label: "Admin Pages", value: "7" },
+            { label: "Admin Pages", value: "8" },
             { label: "Languages", value: "2 (EN/SW)" },
           ].map(({ label, value }) => (
             <div key={label} className="text-center">
@@ -1716,7 +1609,7 @@ function SectionDemoWalkthrough() {
   );
 }
 
-// ─── Section: Support ─────────────────────────────────────────────────────────
+// ─── Section: AI Assistant ────────────────────────────────────────────────────
 
 function SectionSupport() {
   return (
@@ -1890,6 +1783,7 @@ function ManualInner() {
     offline: <SectionOffline />,
     architecture: <SectionArchitecture />,
     roadmap: <SectionRoadmap />,
+    "ai-assistant": <SectionAiAssistant />,
     support: <SectionSupport />,
   };
 
@@ -1908,7 +1802,7 @@ function ManualInner() {
             </p>
           </div>
           <Badge variant="secondary" className="ml-auto text-xs">
-            v2.1
+            v2.2
           </Badge>
         </div>
       </div>
