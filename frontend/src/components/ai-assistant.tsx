@@ -288,10 +288,10 @@ export default function AiAssistant() {
     <Sheet onOpenChange={(open) => { if (!open) resetAll(); }}>
       <SheetTrigger asChild>
         <button
-          className="fixed bottom-6 right-6 z-40 w-12 h-12 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all hover:scale-105 flex items-center justify-center cursor-pointer"
+          className="fixed bottom-6 right-6 z-40 w-14 h-14 rounded-full bg-primary text-primary-foreground shadow-lg hover:bg-primary/90 transition-all hover:scale-105 flex items-center justify-center cursor-pointer"
           aria-label="AI Assistant"
         >
-          <Bot className="h-5 w-5" />
+          <Bot className="h-6 w-6" />
         </button>
       </SheetTrigger>
       <SheetContent side="right" className="w-full sm:max-w-md p-0 flex flex-col">
