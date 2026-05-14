@@ -4,7 +4,7 @@ import { SignInButton } from "@/components/ui/signin.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { cn } from "@/lib/utils.ts";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
-import { useSupabaseQuery } from "@/hooks/use-supabase-query";
+import { useSupabaseQuery, useSupabaseQueryCamel } from "@/hooks/use-supabase-query";
 import { supabaseQueries } from "@/hooks/use-supabase-query";
 import {
   BookOpen,
@@ -1742,17 +1742,8 @@ function MobileSectionPicker({
 
 function ManualInner() {
   const [active, setActive] = useState<SectionId>("overview");
-  const user = useQuery(api.users.getCurrentUserProfile);
-
-  if (user === undefined) {
-    return (
-      <div className="p-6 space-y-3">
-        <Skeleton className="h-8 w-48" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
-      </div>
-    );
-  }
+  const userQuery = useSupabaseQueryCamel<any>(supabaseQueries.getCurrentUser);
+  const user = userQuery.data;
 
   const isAdmin =
     user?.role === "program_lead" || user?.role === "executive_director";

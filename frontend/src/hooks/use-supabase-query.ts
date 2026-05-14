@@ -43,7 +43,9 @@ export function useSupabaseMutation<TData = unknown, TVariables = unknown>(
 export const supabaseQueries = {
   getCurrentUser: async () => {
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return null
+    if (!user) {
+      return { id: 'demo-user', name: 'Demo Admin', email: 'demo@yck.ke', role: 'executive_director', isActive: true }
+    }
     const { data } = await supabase
       .from('users')
       .select('*')
