@@ -78,6 +78,41 @@ export const supabaseQueries = {
     if (error) throw error
     return data
   },
+
+  getDashboardStats: async () => {
+    const { data, error } = await supabase
+      .from('incidents')
+      .select('status')
+    if (error) throw error
+    const total = data.length
+    const newCount = data.filter(i => i.status === 'new').length
+    const inProgress = data.filter(i => ['assigned', 'pfa_in_progress', 'under_review'].includes(i.status)).length
+    const escalated = data.filter(i => i.status === 'escalated').length
+    const resolved = data.filter(i => ['resolved', 'closed'].includes(i.status)).length
+    return { total, new: newCount, inProgress, escalated, resolved }
+  },
+
+  getEscalatedIncidents: async () => {
+    const { data, error } = await supabase
+      .from('incidents')
+      .select('*')
+      .eq('status', 'escalated')
+      .order('created_at', { ascending: false })
+      .limit(5)
+    if (error) throw error
+    return data
+  },
+
+  getNewIncidents: async () => {
+    const { data, error } = await supabase
+      .from('incidents')
+      .select('*')
+      .eq('status', 'new')
+      .order('created_at', { ascending: false })
+      .limit(5)
+    if (error) throw error
+    return data
+  },
 }
 
 // Temp stubs for Convex migration remnants

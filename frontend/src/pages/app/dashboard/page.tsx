@@ -6,7 +6,8 @@ import { Skeleton } from "@/components/ui/skeleton.tsx";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils.ts";
 import { formatDistanceToNow } from "date-fns";
-import { useSupabaseQuery, usePaginatedQuery } from "@/hooks/use-supabase-query";
+import { useSupabaseQuery, useSupabaseQueryCamel } from "@/hooks/use-supabase-query";
+import { supabaseQueries } from "@/hooks/use-supabase-query";
 import {
   ClipboardPlus,
   TrendingUp,
@@ -80,12 +81,12 @@ const TYPE_ICONS: Record<string, React.ElementType> = {
 };
 
 type RecentIncident = {
-  _id: string;
+  id: string;
   incidentType: string;
   location: string;
   status: string;
   isEscalated: boolean;
-  _creationTime: number;
+  created_at: string;
 };
 
 // ─── Shared components ────────────────────────────────────────────────────────
@@ -150,7 +151,7 @@ function IncidentRow({ incident, onClick }: { incident: RecentIncident; onClick:
           )}
         </div>
         <div className="text-xs text-muted-foreground truncate">
-          {incident.location} · {formatDistanceToNow(new Date(incident._creationTime), { addSuffix: true })}
+          {incident.location} · {formatDistanceToNow(new Date(incident.created_at), { addSuffix: true })}
         </div>
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0">
@@ -223,8 +224,11 @@ function PendingDashboard({ name }: { name?: string }) {
 // ─── Volunteer dashboard ──────────────────────────────────────────────────────
 function VolunteerDashboard({ name }: { name?: string }) {
   const navigate = useNavigate();
-  const stats = useSupabaseQuery();
-  const recent = usePaginatedQuery(null, {}, { initialNumItems: 5 });
+  const stats = useSupabaseQueryCamel<{ total: number; new: number; inProgress: number; escalated: number; resolved: number }>(supabaseQueries.getDashboardStats);
+  const incidents = useSupabaseQueryCamel<any[]>(supabaseQueries.listIncidents);
+
+  const s = stats.data ?? { total: 0, new: 0, inProgress: 0, escalated: 0, resolved: 0 };
+  const recent = incidents.data ?? [];
 
   return (
     <div className="pb-8">
@@ -245,10 +249,10 @@ function VolunteerDashboard({ name }: { name?: string }) {
 
       {/* Stats */}
       <div className="px-4 grid grid-cols-2 gap-3">
-        <StatCard label="My Reports" value={stats?.total} icon={TrendingUp} colorClass="bg-primary/10 text-primary" delay={0} />
-        <StatCard label="In Progress" value={stats?.inProgress} icon={Clock} colorClass="bg-amber-50 text-amber-600" delay={0.05} />
-        <StatCard label="Resolved" value={stats?.resolved} icon={CheckCircle2} colorClass="bg-green-50 text-green-600" delay={0.1} />
-        <StatCard label="New" value={stats?.new} icon={ListFilter} colorClass="bg-blue-50 text-blue-600" delay={0.15} />
+        <StatCard label="Total" value={s.total} icon={TrendingUp} colorClass="bg-primary/10 text-primary" delay={0} />
+        <StatCard label="In Progress" value={s.inProgress} icon={Clock} colorClass="bg-amber-50 text-amber-600" delay={0.05} />
+        <StatCard label="Resolved" value={s.resolved} icon={CheckCircle2} colorClass="bg-green-50 text-green-600" delay={0.1} />
+        <StatCard label="New" value={s.new} icon={ListFilter} colorClass="bg-blue-50 text-blue-600" delay={0.15} />
       </div>
 
       {/* Quick action */}
@@ -271,13 +275,13 @@ function VolunteerDashboard({ name }: { name?: string }) {
       {/* My incidents */}
       <div className="px-4 mt-6">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">My Incidents</h2>
+          <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">All Incidents</h2>
           <button onClick={() => navigate("/incidents")} className="text-xs text-primary font-medium">
             View all
           </button>
         </div>
         <Card className="overflow-hidden p-0">
-          {recent.status === "LoadingFirstPage" ? (
+          {stats.isLoading ? (
             <div className="divide-y divide-border">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="px-4 py-3 flex gap-3">
@@ -289,7 +293,7 @@ function VolunteerDashboard({ name }: { name?: string }) {
                 </div>
               ))}
             </div>
-          ) : recent.results.length === 0 ? (
+          ) : recent.length === 0 ? (
             <div className="py-10 text-center">
               <CheckCircle2 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">No incidents logged yet</p>
@@ -298,11 +302,11 @@ function VolunteerDashboard({ name }: { name?: string }) {
               </Button>
             </div>
           ) : (
-            recent.results.slice(0, 5).map((inc) => (
+            recent.slice(0, 5).map((inc) => (
               <IncidentRow
-                key={inc._id}
+                key={inc.id}
                 incident={inc as RecentIncident}
-                onClick={() => navigate(`/incidents/${inc._id}`)}
+                onClick={() => navigate(`/incidents/${inc.id}`)}
               />
             ))
           )}
@@ -315,17 +319,9 @@ function VolunteerDashboard({ name }: { name?: string }) {
 // ─── Staff dashboard (counselor / program_lead / exec_director) ───────────────
 function StaffDashboard({ name, role }: { name?: string; role: string }) {
   const navigate = useNavigate();
-  const stats = useSupabaseQuery();
-  const escalated = usePaginatedQuery(
-    null,
-    { status: "escalated" },
-    { initialNumItems: 5 }
-  );
-  const newIncidents = usePaginatedQuery(
-    null,
-    { status: "new" },
-    { initialNumItems: 5 }
-  );
+  const stats = useSupabaseQueryCamel<{ total: number; new: number; inProgress: number; escalated: number; resolved: number }>(supabaseQueries.getDashboardStats);
+  const escalated = useSupabaseQueryCamel<any[]>(supabaseQueries.getEscalatedIncidents);
+  const newIncidents = useSupabaseQueryCamel<any[]>(supabaseQueries.getNewIncidents);
 
   const canManage = ["program_lead", "executive_director"].includes(role);
 
@@ -350,37 +346,37 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
 
       {/* Stats grid */}
       <div className="px-4 grid grid-cols-2 gap-3">
-        <StatCard label="Total" value={stats?.total} icon={TrendingUp} colorClass="bg-primary/10 text-primary" delay={0} />
-        <StatCard label="New" value={stats?.new} icon={Clock} colorClass="bg-blue-50 text-blue-600" delay={0.05} />
-        <StatCard label="In Progress" value={stats?.inProgress} icon={ListFilter} colorClass="bg-amber-50 text-amber-600" delay={0.1} />
+        <StatCard label="Total" value={stats.data?.total} icon={TrendingUp} colorClass="bg-primary/10 text-primary" delay={0} />
+        <StatCard label="New" value={stats.data?.new} icon={Clock} colorClass="bg-blue-50 text-blue-600" delay={0.05} />
+        <StatCard label="In Progress" value={stats.data?.inProgress} icon={ListFilter} colorClass="bg-amber-50 text-amber-600" delay={0.1} />
         <StatCard
           label="Escalated"
-          value={stats?.escalated}
+          value={stats.data?.escalated}
           icon={ShieldAlert}
-          colorClass={stats?.escalated ? "bg-red-50 text-red-600" : "bg-muted text-muted-foreground"}
+          colorClass={stats.data?.escalated ? "bg-red-50 text-red-600" : "bg-muted text-muted-foreground"}
           delay={0.15}
         />
       </div>
 
       {/* Escalated alerts */}
-      {(escalated.results.length > 0 || escalated.status === "LoadingFirstPage") && (
+      {escalated.data && escalated.data.length > 0 && (
         <div className="px-4 mt-6">
           <div className="flex items-center gap-2 mb-3">
             <ShieldAlert className="h-4 w-4 text-destructive" />
             <h2 className="text-sm font-semibold text-destructive uppercase tracking-wide">Escalated — Action Required</h2>
           </div>
           <Card className="overflow-hidden p-0 border-red-200">
-            {escalated.status === "LoadingFirstPage" ? (
+            {escalated.isLoading ? (
               <div className="px-4 py-3 space-y-2">
                 <Skeleton className="h-12 w-full" />
                 <Skeleton className="h-12 w-full" />
               </div>
             ) : (
-              escalated.results.slice(0, 5).map((inc) => (
+              escalated.data.map((inc: any) => (
                 <IncidentRow
-                  key={inc._id}
+                  key={inc.id}
                   incident={inc as RecentIncident}
-                  onClick={() => navigate(`/incidents/${inc._id}`)}
+                  onClick={() => navigate(`/incidents/${inc.id}`)}
                 />
               ))
             )}
@@ -399,7 +395,7 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
           </button>
         </div>
         <Card className="overflow-hidden p-0">
-          {newIncidents.status === "LoadingFirstPage" ? (
+          {newIncidents.isLoading ? (
             <div className="divide-y divide-border">
               {[1, 2, 3].map((i) => (
                 <div key={i} className="px-4 py-3 flex gap-3">
@@ -411,17 +407,17 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
                 </div>
               ))}
             </div>
-          ) : newIncidents.results.length === 0 ? (
+          ) : !newIncidents.data || newIncidents.data.length === 0 ? (
             <div className="py-8 text-center">
               <CheckCircle2 className="h-7 w-7 text-green-500 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">All caught up — no new incidents</p>
             </div>
           ) : (
-            newIncidents.results.slice(0, 5).map((inc) => (
+            newIncidents.data.slice(0, 5).map((inc: any) => (
               <IncidentRow
-                key={inc._id}
+                key={inc.id}
                 incident={inc as RecentIncident}
-                onClick={() => navigate(`/incidents/${inc._id}`)}
+                onClick={() => navigate(`/incidents/${inc.id}`)}
               />
             ))
           )}
@@ -483,9 +479,10 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
 
 // ─── Root export ──────────────────────────────────────────────────────────────
 export default function DashboardPage() {
-  const user = useSupabaseQuery();
+  const userQuery = useSupabaseQueryCamel<any>(supabaseQueries.getCurrentUser);
+  const user = userQuery.data;
 
-  if (user === undefined) {
+  if (userQuery.isLoading) {
     return (
       <div className="p-4 space-y-4">
         <Skeleton className="h-20 w-full" />
