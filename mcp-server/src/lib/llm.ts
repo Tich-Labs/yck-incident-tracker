@@ -26,7 +26,7 @@ function detectConfig(): { apiKey: string; baseURL: string; model: string; provi
     return {
       apiKey: groqKey,
       baseURL: "https://api.groq.com/openai/v1",
-      model: process.env.GROQ_MODEL || "llama3-70b-8192",
+      model: process.env.GROQ_MODEL || "llama-3.3-70b-versatile",
       provider: "groq",
     };
   }
