@@ -41,6 +41,7 @@ import {
   RefreshCw,
   Smartphone,
   Star,
+  Sparkles,
   WifiOff,
 } from "lucide-react";
 
