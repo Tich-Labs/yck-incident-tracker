@@ -22,9 +22,24 @@ A trauma-informed, offline-capable Progressive Web App for Youth Changers Kenya 
 - **Audit Log** — full action history for accountability
 - **Anonymous Reporting** — reference code system, no PII collected
 
+## AI Assistant (In-App)
+
+Every admin page has a floating **AI Assistant** button (bottom-right). Click it to open a slide-out panel with three tools powered by the MCP server:
+
+### Match Services
+Describe an incident — the AI finds the best-matched referral services (health, police, shelter, psychosocial, legal) with relevance scores and reasoning.
+
+### Assess Risk  
+Describe the incident — the AI returns a risk score (0-100), severity level, urgency, risk factors, and recommended actions.
+
+### Generate FHIR Bundle
+Generate a FHIR R4 transaction bundle (Observation, Patient, Consent, Location, ServiceRequest) for EHR interoperability.
+
+AI matching uses **Groq's free tier** (Llama 3.3 70B) by default, with fallback to keyword matching. The LLM provider is configurable via env vars — swap to Ollama, OpenAI, or any OpenAI-compatible API without code changes.
+
 ## Prompt Opinion Integration
 
-This project participated in the **Agents Assemble Healthcare AI Challenge**. The MCP server connects to the **Prompt Opinion** platform, allowing AI agents to:
+The MCP server connects to the **Prompt Opinion** platform, allowing external AI agents to:
 
 - **Match incidents to referral services** — agents call `match_services` to find nearby health, police, shelter, psychosocial, and legal services based on incident type and location
 - **Assess risk severity** — agents call `assess_risk` to score incidents (0-100) with urgency levels and recommended actions
@@ -119,6 +134,8 @@ The app deploys automatically to GitHub Pages on push to `main`.
 **Required GitHub secrets:**
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
+- `VITE_MCP_SERVER_URL` — `https://yck-incident-tracker-production.up.railway.app/`
+- `VITE_MCP_API_KEY` — your MCP API key
 
 Set these in **Settings → Secrets and variables → Actions**, then enable GitHub Pages under **Settings → Pages → Source: GitHub Actions**.
 
@@ -131,6 +148,18 @@ The MCP server is deployed separately on Railway at https://yck-incident-tracker
 | `match_services` | Match incidents to verified referral services (AI + keyword) |
 | `generate_fhir_bundle` | Generate FHIR R4 transaction bundles (Observation, Patient, Consent, Location, ServiceRequest) |
 | `assess_risk` | Risk/severity scoring for incidents (0-100, severity, urgency, factors, actions) |
+
+## LLM Provider Configuration
+
+The MCP server supports any OpenAI-compatible LLM provider. Set one of these env vars:
+
+| Provider | Env Var | Value |
+|----------|---------|-------|
+| Groq (free) | `GROQ_API_KEY` | `gsk_your_key` |
+| Ollama | `OLLAMA_BASE_URL` | `http://localhost:11434` |
+| OpenAI | `OPENAI_API_KEY` | `sk_your_key` |
+
+Optional: `GROQ_MODEL`, `OLLAMA_MODEL`, `OPENAI_MODEL` to override defaults. Falls back to keyword matching if no LLM is configured.
 
 ## Interactive User Journey
 
