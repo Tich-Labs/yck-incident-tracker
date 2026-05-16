@@ -43,7 +43,7 @@
     <section class="mb-16 step active" id="survivor-step-1">
       <div class="bg-white rounded-xl shadow-lg p-8">
         <h2 class="text-2xl font-bold mb-4">1. Safety Gate</h2>
-        <p class="text-gray-600 mb-6">Mandatory consent screen — "Your Safety Matters" — before accessing the form.</p>
+        <p class="text-gray-600 mb-6">Mandatory consent screen — "Your Safety Matters" — before accessing the form. <strong>PWA install prompt</strong> appears here and on any step of the incident tracker or Find Help experience.</p>
         <img src="screenshots/survivor/consent.png" alt="Safety Gate" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
           <h4 class="font-bold mb-2">🔒 Trauma-Informed</h4>
@@ -52,10 +52,22 @@
       </div>
     </section>
 
-    <!-- Step 2: Incident Type -->
+    <!-- Step 2: Who is reporting? -->
     <section class="mb-16 step" id="survivor-step-2">
       <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">2. Step 1 of 4 — Incident Type</h2>
+        <h2 class="text-2xl font-bold mb-4">2. Step 1 of 5 — Who is reporting?</h2>
+        <p class="text-gray-600 mb-6">Select reporter type: Self (Survivor), On Behalf of Survivor, or Volunteer. If volunteer, enter unique Volunteer ID (e.g. MARY-KM-001) to track reports to their profile.</p>
+        <div class="tooltip -bottom-20 left-0">
+          <h4 class="font-bold mb-2">👤 Reporter Identity</h4>
+          <p class="text-sm">Three options: Self (survivor), On Behalf (relative/friend), Volunteer (field worker with unique ID). No account required.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 3: Incident Type -->
+    <section class="mb-16 step" id="survivor-step-3">
+      <div class="bg-white rounded-xl shadow-lg p-8">
+        <h2 class="text-2xl font-bold mb-4">3. Step 2 of 5 — Incident Type</h2>
         <p class="text-gray-600 mb-6">Tap-friendly icon grid with 10 incident categories. Date and time fields below.</p>
         <img src="screenshots/survivor/step1.png" alt="Incident Type" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
@@ -65,10 +77,10 @@
       </div>
     </section>
 
-    <!-- Step 3: Location & Description -->
-    <section class="mb-16 step" id="survivor-step-3">
+    <!-- Step 4: Location & Description -->
+    <section class="mb-16 step" id="survivor-step-4">
       <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">3. Step 2 of 4 — Location & Description</h2>
+        <h2 class="text-2xl font-bold mb-4">4. Step 3 of 5 — Location & Description</h2>
         <p class="text-gray-600 mb-6">Where it happened and a factual description of the incident.</p>
         <img src="screenshots/survivor/step2.png" alt="Location and Description" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
@@ -78,10 +90,10 @@
       </div>
     </section>
 
-    <!-- Step 4: Survivor Info -->
-    <section class="mb-16 step" id="survivor-step-4">
+    <!-- Step 5: Survivor Info -->
+    <section class="mb-16 step" id="survivor-step-5">
       <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">4. Step 3 of 4 — Survivor Info</h2>
+        <h2 class="text-2xl font-bold mb-4">5. Step 4 of 5 — Survivor Info</h2>
         <p class="text-gray-600 mb-6">Age group and gender only — no names or identifying details collected.</p>
         <img src="screenshots/survivor/step3.png" alt="Survivor Info" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
@@ -91,23 +103,23 @@
       </div>
     </section>
 
-    <!-- Step 5: Review & Submit -->
-    <section class="mb-16 step" id="survivor-step-5">
+    <!-- Step 6: Review & Submit -->
+    <section class="mb-16 step" id="survivor-step-6">
       <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">5. Step 4 of 4 — Review & Submit</h2>
-        <p class="text-gray-600 mb-6">Summary of all entered details before final submission. Optional reference code and email.</p>
+        <h2 class="text-2xl font-bold mb-4">6. Step 5 of 5 — Review & Submit</h2>
+        <p class="text-gray-600 mb-6">Summary of all entered details before final submission. Reporter type shown. Self/on-behalf reporters get optional reference code; volunteers see their Volunteer ID instead.</p>
         <img src="screenshots/survivor/steps4.png" alt="Review and Submit" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
-          <h4 class="font-bold mb-2">🔁 Memorable Reference Code</h4>
-          <p class="text-sm">Initials + birth month + year (e.g. NT111974) creates a code survivors can remember without writing down.</p>
+          <h4 class="font-bold mb-2">🔁 Reference Code or Volunteer ID</h4>
+          <p class="text-sm">Self/on-behalf: initials + birth month + year (e.g. NT111974). Volunteer: unique Volunteer ID (e.g. MARY-KM-001) replaces the reference code.</p>
         </div>
       </div>
     </section>
 
-    <!-- Step 6: Success -->
-    <section class="mb-16 step" id="survivor-step-6">
+    <!-- Step 7: Success -->
+    <section class="mb-16 step" id="survivor-step-7">
       <div class="bg-white rounded-xl shadow-lg p-8">
-        <h2 class="text-2xl font-bold mb-4">6. Report Submitted</h2>
+        <h2 class="text-2xl font-bold mb-4">7. Report Submitted</h2>
         <p class="text-gray-600 mb-6">Confirmation screen with unique reference ID and next-steps guide.</p>
         <img src="screenshots/survivor/submission_confimred.png" alt="Success Page" class="screenshot w-full" />
         <div class="tooltip -bottom-20 left-0">
@@ -242,7 +254,7 @@
   </div>
 
   <script>
-    const journeySteps = { survivor: 6, admin: 7 };
+    const journeySteps = { survivor: 7, admin: 7 };
     let currentJourney = 'survivor';
     let currentStep = 1;
 

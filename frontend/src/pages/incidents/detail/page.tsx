@@ -19,6 +19,7 @@ import {
   ChevronLeft,
   AlertTriangle,
   User,
+  Users,
   MapPin,
   Calendar,
   Clock,
@@ -47,6 +48,18 @@ const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   escalated: { label: "Escalated", className: "bg-red-100 text-red-800 border-red-200" },
   resolved: { label: "Resolved", className: "bg-green-100 text-green-800 border-green-200" },
   closed: { label: "Closed", className: "bg-muted text-muted-foreground border-border" },
+};
+
+const REPORTER_TYPE_LABELS: Record<string, string> = {
+  self: "Survivor",
+  on_behalf: "For Someone",
+  volunteer: "Volunteer",
+};
+
+const REPORTER_TYPE_ICONS: Record<string, React.ElementType> = {
+  self: User,
+  on_behalf: Users,
+  volunteer: UserCheck,
 };
 
 const INCIDENT_TYPE_LABELS: Record<string, string> = {
@@ -656,6 +669,16 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
             label="Survivor"
             value={`${incident.survivorAgeGroup.replace("_", " ")} · ${incident.survivorGender.replace("_", " ")}`}
           />
+          {incident.reporterType && (
+            <DetailRow
+              icon={REPORTER_TYPE_ICONS[incident.reporterType] ?? User}
+              label="Reporter"
+              value={REPORTER_TYPE_LABELS[incident.reporterType] ?? incident.reporterType}
+            />
+          )}
+          {incident.volunteerId && (
+            <DetailRow icon={UserCheck} label="Volunteer ID" value={incident.volunteerId} />
+          )}
           <DetailRow icon={User} label="Submitted By" value={incident.submitterName} />
           {incident.assigneeName && (
             <DetailRow icon={UserCheck} label="Assigned To" value={incident.assigneeName} />

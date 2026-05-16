@@ -27,6 +27,8 @@ import {
   ClipboardList,
   MapPin,
   User,
+  Users,
+  UserCheck,
   FileText,
   Send,
   AlertTriangle,
@@ -86,11 +88,22 @@ const AGE_GROUP_VALUES = [
 
 const GENDER_VALUES = ["male", "female", "other", "prefer_not_to_say"] as const;
 
+const REPORTER_TYPE_VALUES = ["self", "on_behalf", "volunteer"] as const;
+
 type IncidentType = (typeof INCIDENT_TYPE_VALUES)[number];
 type AgeGroup = (typeof AGE_GROUP_VALUES)[number];
 type Gender = (typeof GENDER_VALUES)[number];
+type ReporterType = (typeof REPORTER_TYPE_VALUES)[number];
+
+const REPORTER_ICONS: Record<string, typeof User> = {
+  self: User,
+  on_behalf: Users,
+  volunteer: UserCheck,
+};
 
 interface FormData {
+  reporterType: ReporterType | "";
+  volunteerId: string;
   incidentDate: string;
   incidentTime: string;
   incidentType: IncidentType | "";
@@ -105,7 +118,7 @@ interface FormData {
   reporterBirthYear: string;
 }
 
-const STEP_ICONS = [ClipboardList, MapPin, User, FileText];
+const STEP_ICONS = [UserCheck, ClipboardList, MapPin, User, FileText];
 
 // --- Step indicator ---
 function StepIndicator({ current, stepTitles }: { current: number; stepTitles: string[] }) {
@@ -139,8 +152,68 @@ function StepIndicator({ current, stepTitles }: { current: number; stepTitles: s
   );
 }
 
-// --- Step 1: Incident type + date/time ---
-function Step1({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
+// --- Step 1: Who is reporting? ---
+function StepReporter({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
+  return (
+    <div className="space-y-6 px-4 py-6">
+      <div>
+        <h2 className="text-lg font-bold mb-1">{t("reporter.title")}</h2>
+        <p className="text-sm text-muted-foreground">{t("reporter.instruction")}</p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-2">
+        {REPORTER_TYPE_VALUES.map((typeValue) => {
+          const Icon = REPORTER_ICONS[typeValue];
+          const isSelected = data.reporterType === typeValue;
+          const descKey = `reporter.${typeValue}Desc`;
+          return (
+            <button
+              key={typeValue}
+              type="button"
+              onClick={() => onChange({ reporterType: typeValue, volunteerId: typeValue !== "volunteer" ? "" : data.volunteerId })}
+              className={cn(
+                "flex flex-col items-start gap-1 p-4 rounded-xl border-2 text-left transition-all active:scale-95 cursor-pointer",
+                isSelected
+                  ? "border-primary bg-accent text-accent-foreground"
+                  : "border-border bg-card hover:border-primary/40"
+              )}
+            >
+              <div className="flex items-center gap-3">
+                <Icon
+                  className={cn(
+                    "h-5 w-5",
+                    isSelected ? "text-primary" : "text-muted-foreground"
+                  )}
+                />
+                <span className="text-sm font-semibold">{t(`reporter.${typeValue}`)}</span>
+              </div>
+              <span className="text-xs text-muted-foreground ml-8">{t(descKey)}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {data.reporterType === "volunteer" && (
+        <div className="space-y-2">
+          <Label htmlFor="volunteerId" className="text-sm font-medium">
+            {t("reporter.volunteerIdLabel")} <span className="text-destructive">*</span>
+          </Label>
+          <Input
+            id="volunteerId"
+            placeholder={t("reporter.volunteerIdPlaceholder")}
+            value={data.volunteerId}
+            onChange={(e) => onChange({ volunteerId: e.target.value.toUpperCase().replace(/[^A-Z0-9-]/g, "") })}
+            className="h-11 font-mono tracking-wider"
+          />
+          <p className="text-xs text-muted-foreground">{t("reporter.volunteerIdHint")}</p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// --- Step 2: Incident type + date/time ---
+function StepIncidentType({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
   return (
     <div className="space-y-6 px-4 py-6">
       <div>
@@ -215,8 +288,8 @@ function Step1({ data, onChange, t }: { data: FormData; onChange: (f: Partial<Fo
   );
 }
 
-// --- Step 2: Location + description ---
-function Step2({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
+// --- Step 3: Location + description ---
+function StepLocationDesc({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
   return (
     <div className="space-y-6 px-4 py-6">
       <div>
@@ -259,8 +332,8 @@ function Step2({ data, onChange, t }: { data: FormData; onChange: (f: Partial<Fo
   );
 }
 
-// --- Step 3: Survivor info (anonymized) ---
-function Step3({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
+// --- Step 4: Survivor info (anonymized) ---
+function StepSurvivorInfo({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
   return (
     <div className="space-y-6 px-4 py-6">
       <div>
@@ -321,8 +394,8 @@ function Step3({ data, onChange, t }: { data: FormData; onChange: (f: Partial<Fo
   );
 }
 
-// --- Step 4: Notes + reference builder + optional contact + review ---
-function Step4({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
+// --- Step 5: Notes + reference builder / volunteer ID + optional contact + review ---
+function StepReviewSubmit({ data, onChange, t }: { data: FormData; onChange: (f: Partial<FormData>) => void; t: (key: string, opts?: Record<string, unknown>) => string }) {
   const previewRef =
     data.reporterInitials.trim().length >= 2 &&
     data.reporterBirthMonth.trim().length > 0 &&
@@ -351,74 +424,87 @@ function Step4({ data, onChange, t }: { data: FormData; onChange: (f: Partial<Fo
         />
       </div>
 
-      {/* Reference number builder */}
-      <div className="space-y-3">
-        <div>
-          <Label className="text-sm font-medium">
-            {t("step4.refLabel")}{" "}
-            <span className="text-muted-foreground font-normal">{t("step4.refOptional")}</span>
-          </Label>
-          <p className="text-xs text-muted-foreground mt-1">
-            {t("step4.refHint")}
-          </p>
+      {/* Volunteer ID display (for volunteer reporters) */}
+      {data.reporterType === "volunteer" && data.volunteerId && (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20">
+          <UserCheck className="h-4 w-4 text-primary flex-shrink-0" />
+          <span className="text-sm font-mono font-bold text-primary tracking-widest">
+            {data.volunteerId}
+          </span>
+          <span className="text-xs text-muted-foreground ml-auto">{t("reporter.volunteerIdLabel")}</span>
         </div>
-        <div className="grid grid-cols-3 gap-2">
-          <div className="space-y-1.5">
-            <Label htmlFor="refInitials" className="text-xs text-muted-foreground">
-              {t("step4.initialsLabel")}
+      )}
+
+      {/* Reference number builder (for self / on_behalf reporters) */}
+      {data.reporterType !== "volunteer" && (
+        <div className="space-y-3">
+          <div>
+            <Label className="text-sm font-medium">
+              {t("step4.refLabel")}{" "}
+              <span className="text-muted-foreground font-normal">{t("step4.refOptional")}</span>
             </Label>
-            <Input
-              id="refInitials"
-              placeholder="NT"
-              maxLength={3}
-              value={data.reporterInitials}
-              onChange={(e) =>
-                onChange({ reporterInitials: e.target.value.replace(/[^a-zA-Z]/g, "") })
-              }
-              className="h-10 uppercase tracking-widest font-mono"
-            />
+            <p className="text-xs text-muted-foreground mt-1">
+              {t("step4.refHint")}
+            </p>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="refMonth" className="text-xs text-muted-foreground">
-              {t("step4.monthLabel")}
-            </Label>
-            <Input
-              id="refMonth"
-              placeholder="11"
-              type="number"
-              min={1}
-              max={12}
-              value={data.reporterBirthMonth}
-              onChange={(e) => onChange({ reporterBirthMonth: e.target.value })}
-              className="h-10 font-mono"
-            />
+          <div className="grid grid-cols-3 gap-2">
+            <div className="space-y-1.5">
+              <Label htmlFor="refInitials" className="text-xs text-muted-foreground">
+                {t("step4.initialsLabel")}
+              </Label>
+              <Input
+                id="refInitials"
+                placeholder="NT"
+                maxLength={3}
+                value={data.reporterInitials}
+                onChange={(e) =>
+                  onChange({ reporterInitials: e.target.value.replace(/[^a-zA-Z]/g, "") })
+                }
+                className="h-10 uppercase tracking-widest font-mono"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="refMonth" className="text-xs text-muted-foreground">
+                {t("step4.monthLabel")}
+              </Label>
+              <Input
+                id="refMonth"
+                placeholder="11"
+                type="number"
+                min={1}
+                max={12}
+                value={data.reporterBirthMonth}
+                onChange={(e) => onChange({ reporterBirthMonth: e.target.value })}
+                className="h-10 font-mono"
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="refYear" className="text-xs text-muted-foreground">
+                {t("step4.yearLabel")}
+              </Label>
+              <Input
+                id="refYear"
+                placeholder="1974"
+                type="number"
+                min={1900}
+                max={new Date().getFullYear()}
+                value={data.reporterBirthYear}
+                onChange={(e) => onChange({ reporterBirthYear: e.target.value })}
+                className="h-10 font-mono"
+              />
+            </div>
           </div>
-          <div className="space-y-1.5">
-            <Label htmlFor="refYear" className="text-xs text-muted-foreground">
-              {t("step4.yearLabel")}
-            </Label>
-            <Input
-              id="refYear"
-              placeholder="1974"
-              type="number"
-              min={1900}
-              max={new Date().getFullYear()}
-              value={data.reporterBirthYear}
-              onChange={(e) => onChange({ reporterBirthYear: e.target.value })}
-              className="h-10 font-mono"
-            />
-          </div>
+          {previewRef && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20">
+              <KeyRound className="h-4 w-4 text-primary flex-shrink-0" />
+              <span className="text-sm font-mono font-bold text-primary tracking-widest">
+                #{previewRef}
+              </span>
+              <span className="text-xs text-muted-foreground ml-auto">{t("step4.yourReference")}</span>
+            </div>
+          )}
         </div>
-        {previewRef && (
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20">
-            <KeyRound className="h-4 w-4 text-primary flex-shrink-0" />
-            <span className="text-sm font-mono font-bold text-primary tracking-widest">
-              #{previewRef}
-            </span>
-            <span className="text-xs text-muted-foreground ml-auto">{t("step4.yourReference")}</span>
-          </div>
-        )}
-      </div>
+      )}
 
       {/* Optional contact */}
       <div className="space-y-2">
@@ -445,6 +531,10 @@ function Step4({ data, onChange, t }: { data: FormData; onChange: (f: Partial<Fo
         </div>
         <div className="divide-y divide-border">
           {[
+            { label: t("review.reporter"), value: data.reporterType ? t(`reporter.${data.reporterType}`) : "—" },
+            ...(data.reporterType === "volunteer" && data.volunteerId
+              ? [{ label: t("review.volunteerId"), value: data.volunteerId }]
+              : []),
             { label: t("review.type"), value: data.incidentType ? t(`types.${data.incidentType}`) : "—" },
             { label: t("review.date"), value: data.incidentDate || "—" },
             { label: t("review.time"), value: data.incidentTime || t("review.notSpecified") },
@@ -466,14 +556,18 @@ function Step4({ data, onChange, t }: { data: FormData; onChange: (f: Partial<Fo
 // --- Validation per step ---
 function validate(step: number, data: FormData, t: (key: string) => string): string | null {
   if (step === 1) {
+    if (!data.reporterType) return t("validation.selectReporter");
+    if (data.reporterType === "volunteer" && !data.volunteerId.trim()) return t("validation.enterVolunteerId");
+  }
+  if (step === 2) {
     if (!data.incidentType) return t("validation.selectType");
     if (!data.incidentDate) return t("validation.enterDate");
   }
-  if (step === 2) {
+  if (step === 3) {
     if (!data.location.trim()) return t("validation.enterLocation");
     if (data.description.trim().length < 30) return t("validation.descriptionMin");
   }
-  if (step === 3) {
+  if (step === 4) {
     if (!data.survivorAgeGroup) return t("validation.selectAge");
     if (!data.survivorGender) return t("validation.selectGender");
   }
@@ -504,6 +598,7 @@ export default function NewIncidentPage() {
   const [error, setError] = useState<string | null>(null);
 
   const stepTitles = [
+    t("reporter.title"),
     t("step1.title"),
     t("step2.title"),
     t("step3.title"),
@@ -522,6 +617,8 @@ export default function NewIncidentPage() {
   }, []);
 
   const [form, setForm] = useState<FormData>({
+    reporterType: "",
+    volunteerId: "",
     incidentDate: new Date().toISOString().split("T")[0],
     incidentTime: "",
     incidentType: "",
@@ -565,12 +662,14 @@ export default function NewIncidentPage() {
   };
 
   const handleSubmit = async () => {
-    if (!form.incidentType || !form.survivorAgeGroup || !form.survivorGender) return;
+    if (!form.reporterType || !form.incidentType || !form.survivorAgeGroup || !form.survivorGender) return;
     setSubmitting(true);
 
     // Offline — queue and redirect
     if (!isOnline) {
       enqueue({
+        reporterType: form.reporterType,
+        volunteerId: form.volunteerId || undefined,
         incidentDate: form.incidentDate,
         incidentTime: form.incidentTime || undefined,
         incidentType: form.incidentType,
@@ -590,6 +689,8 @@ export default function NewIncidentPage() {
     try {
       const offlineId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
       const data = await createIncident.mutateAsync({
+        reporter_type: form.reporterType,
+        volunteer_id: form.volunteerId || undefined,
         incident_date: form.incidentDate,
         incident_time: form.incidentTime || undefined,
         incident_type: form.incidentType,
@@ -668,10 +769,11 @@ export default function NewIncidentPage() {
 
       {/* Form content */}
       <div className="flex-1 overflow-y-auto">
-        {step === 1 && <Step1 data={form} onChange={update} t={t} />}
-        {step === 2 && <Step2 data={form} onChange={update} t={t} />}
-        {step === 3 && <Step3 data={form} onChange={update} t={t} />}
-        {step === 4 && <Step4 data={form} onChange={update} t={t} />}
+        {step === 1 && <StepReporter data={form} onChange={update} t={t} />}
+        {step === 2 && <StepIncidentType data={form} onChange={update} t={t} />}
+        {step === 3 && <StepLocationDesc data={form} onChange={update} t={t} />}
+        {step === 4 && <StepSurvivorInfo data={form} onChange={update} t={t} />}
+        {step === 5 && <StepReviewSubmit data={form} onChange={update} t={t} />}
       </div>
 
       {/* Error message */}

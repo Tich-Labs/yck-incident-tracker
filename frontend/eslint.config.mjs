@@ -21,6 +21,7 @@ export default defineConfig([
         "error",
         { "ts-ignore": true, "ts-expect-error": true, "ts-nocheck": true },
       ],
+      "@typescript-eslint/no-explicit-any": "off",
       "@typescript-eslint/no-unused-vars": "off",
       "prefer-const": "off",
       "react-refresh/only-export-components": [

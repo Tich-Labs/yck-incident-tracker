@@ -25,6 +25,8 @@ CREATE TABLE IF NOT EXISTS incidents (
   status TEXT NOT NULL DEFAULT 'new' CHECK (status IN ('new', 'assigned', 'pfa_in_progress', 'under_review', 'escalated', 'resolved', 'closed')),
   is_escalated BOOLEAN DEFAULT false,
   escalated_at TIMESTAMPTZ,
+  reporter_type TEXT NOT NULL DEFAULT 'self' CHECK (reporter_type IN ('self', 'on_behalf', 'volunteer')),
+  volunteer_id TEXT,
   survivor_age_group TEXT,
   survivor_gender TEXT,
   submitter_contact TEXT,

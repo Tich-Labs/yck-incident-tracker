@@ -22,10 +22,12 @@ import ReferralDirectoryPage from "./pages/referral/page.tsx";
 import AdminServicesPage from "./pages/admin/services/page.tsx";
 import { useServiceWorker } from "@/hooks/use-service-worker.ts";
 import QuickExit from "@/components/quick-exit.tsx";
+import { InstallPrompt } from "@/components/install-prompt.tsx";
 
 const SurvivorLayout = () => (
   <>
     <QuickExit />
+    <InstallPrompt />
     <Outlet />
   </>
 );

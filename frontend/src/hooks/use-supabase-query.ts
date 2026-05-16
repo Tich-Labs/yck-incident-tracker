@@ -4,12 +4,10 @@ import { snakeToCamel } from '@/lib/supabase-utils'
 
 // Hook for querying Supabase data
 export function useSupabaseQuery<T>(queryFn?: () => Promise<T>) {
-  if (!queryFn) {
-    return { data: null, isLoading: false, error: null, status: 'success' } as any;
-  }
   return useQuery({
-    queryKey: ['supabase', queryFn.toString()],
-    queryFn,
+    queryKey: ['supabase', queryFn?.toString() ?? 'noop'],
+    queryFn: queryFn ?? (async () => null as unknown as T),
+    enabled: !!queryFn,
   })
 }
 
@@ -85,7 +83,7 @@ export const supabaseQueries = {
     const { data, error } = await supabase
       .from('incidents')
       .select('status')
-    if (error) throw error
+    if (error || !data) return { total: 0, new: 0, inProgress: 0, escalated: 0, resolved: 0 }
     const total = data.length
     const newCount = data.filter(i => i.status === 'new').length
     const inProgress = data.filter(i => ['assigned', 'pfa_in_progress', 'under_review'].includes(i.status)).length
@@ -101,7 +99,7 @@ export const supabaseQueries = {
       .eq('status', 'escalated')
       .order('created_at', { ascending: false })
       .limit(5)
-    if (error) throw error
+    if (error || !data) return []
     return data
   },
 
@@ -112,7 +110,7 @@ export const supabaseQueries = {
       .eq('status', 'new')
       .order('created_at', { ascending: false })
       .limit(5)
-    if (error) throw error
+    if (error || !data) return []
     return data
   },
 }

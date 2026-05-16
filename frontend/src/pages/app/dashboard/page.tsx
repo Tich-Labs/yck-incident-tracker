@@ -86,7 +86,7 @@ type RecentIncident = {
   location: string;
   status: string;
   isEscalated: boolean;
-  created_at: string;
+  createdAt: string;
 };
 
 // ─── Shared components ────────────────────────────────────────────────────────
@@ -151,7 +151,7 @@ function IncidentRow({ incident, onClick }: { incident: RecentIncident; onClick:
           )}
         </div>
         <div className="text-xs text-muted-foreground truncate">
-          {incident.location} · {formatDistanceToNow(new Date(incident.created_at), { addSuffix: true })}
+          {incident.location}{incident.createdAt ? ` · ${formatDistanceToNow(new Date(incident.createdAt), { addSuffix: true })}` : ''}
         </div>
       </div>
       <div className="flex items-center gap-1.5 flex-shrink-0">

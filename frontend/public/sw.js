@@ -3,8 +3,10 @@ const OFFLINE_QUEUE_KEY = "yck_offline_queue";
 
 const urlsToCache = [
   "/",
-  "/dashboard",
+  "/incidents/safety",
   "/incidents/new",
+  "/incidents/success",
+  "/referral",
   "/icon/icon-192.png",
   "/icon/icon-512.png",
   "/site.webmanifest"
@@ -104,7 +106,7 @@ self.addEventListener("notificationclick", (event) => {
       for (const client of clientList) {
         if ("focus" in client) return client.focus();
       }
-      if (clients.openWindow) return clients.openWindow("/dashboard");
+      if (clients.openWindow) return clients.openWindow("/");
     })
   );
 });

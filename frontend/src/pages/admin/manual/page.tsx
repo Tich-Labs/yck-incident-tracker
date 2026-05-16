@@ -667,8 +667,12 @@ function SectionIncidents() {
 
       <InfoBox variant="info">
         Incident forms can be submitted <strong>anonymously</strong> by the public via the{" "}
-        <strong>/incidents/new</strong> page. No account is required. Anonymous reporters can
-        optionally provide an email for a confirmation message.
+        <strong>/incidents/new</strong> page. No account is required. Reporters select from three
+        types: <strong>Self</strong> (survivor), <strong>On Behalf of Survivor</strong> (relative/friend),
+        or <strong>Volunteer</strong> (field worker with a unique Volunteer ID). Self and on-behalf
+        reporters can build a private reference code (initials + birth month + birth year) to track
+        their report. Volunteers enter their Volunteer ID (e.g. <code>MARY-KM-001</code>) to group all
+        their submissions under their volunteer profile without needing an account.
       </InfoBox>
     </div>
   );
@@ -786,8 +790,18 @@ function SectionPrivacy() {
       <h3 className="text-sm font-semibold mb-3">Anonymous reporting</h3>
       <p className="text-sm text-muted-foreground leading-relaxed mb-3">
         The incident form is accessible at <CodeChip>/incidents/safety</CodeChip> without
-        any sign-in. No account, name, or contact information is required. Reporters may
-        optionally provide an email for a confirmation message — but this is never mandatory.
+        any sign-in. No account, name, or contact information is required. Every submission
+        begins with the reporter selecting their role: <strong>Self</strong> (survivor),
+        <strong> On Behalf of Survivor</strong> (relative/friend), or <strong>Volunteer</strong>
+        (field worker with a unique Volunteer ID). Reporters may optionally provide an email
+        for a confirmation message — but this is never mandatory.
+      </p>
+      <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+        Self and on-behalf reporters can build a private reference code from their initials,
+        birth month, and birth year (e.g. NT111974) so they can follow up without revealing
+        their identity. Volunteers instead enter their unique Volunteer ID (e.g.{" "}
+        <CodeChip>MARY-KM-001</CodeChip>), which associates all their reports with their
+        volunteer profile — no account required.
       </p>
 
       <h3 className="text-sm font-semibold mb-3">Data minimisation</h3>
@@ -827,7 +841,7 @@ function SectionAuditLog() {
       <h3 className="text-sm font-semibold mb-3">What is logged</h3>
       <div className="rounded-xl border border-border overflow-hidden mb-5">
         {[
-          { label: "Incident created", desc: "New report submitted — records reporter type (staff or anonymous)" },
+          { label: "Incident created", desc: "New report submitted — records reporter type (self, on_behalf, or volunteer) and volunteer ID if applicable" },
           { label: "Status changed", desc: "Any status transition (e.g. New → Assigned, PFA → Resolved)" },
           { label: "Incident assigned", desc: "Case assigned to a specific counselor" },
           { label: "Note added", desc: "Staff member added a note to an incident" },
@@ -1290,19 +1304,22 @@ const WALKTHROUGH_SCREENS: WalkthroughScreen[] = [
     ],
   },
   {
-    title: "Incident Report Form (4 Steps)",
+    title: "Incident Report Form (5 Steps)",
     path: "/en/incidents/new",
     audience: "public",
     icon: ClipboardPlus,
     description:
-      "Anonymous 4-step wizard for reporting incidents. No account required. Works offline.",
+      "Anonymous 5-step wizard for reporting incidents. Three reporter types. No account required. Works offline.",
     features: [
-      "Step 1: Category selection (10 large tap-friendly icon cards)",
-      "Step 2: Location details (county, sub-county, landmark)",
-      "Step 3: Survivor info (age group, gender — anonymized)",
-      "Step 4: Incident description and optional contact email",
-      "Progress indicator showing current step (1/4, 2/4, etc.)",
+      "Step 1: Who is reporting? — Self (Survivor), On Behalf of Survivor, or Volunteer with unique ID",
+      "Step 2: Incident type selection (10 large tap-friendly icon cards) + date/time",
+      "Step 3: Location details and incident description",
+      "Step 4: Survivor info (age group, gender — anonymized)",
+      "Step 5: Review & submit — reference code builder (self/on behalf) or volunteer ID display",
+      "Progress indicator showing current step (1/5, 2/5, etc.)",
       "Anonymity banner: 'This report is anonymous. No account needed.'",
+      "Volunteer ID field (e.g. MARY-KM-001) shown only when Volunteer is selected",
+      "Reference code builder (initials + birth month + birth year) for self/on-behalf reporters",
       "Language switcher in header",
       "Offline support: saves locally when no internet",
     ],

@@ -4,15 +4,15 @@ A trauma-informed, offline-capable Progressive Web App for Youth Changers Kenya 
 
 [![Deploy to GitHub Pages](https://github.com/Tich-Labs/yck-incident-tracker/actions/workflows/deploy.yml/badge.svg)](https://github.com/Tich-Labs/yck-incident-tracker/actions/workflows/deploy.yml)
 
-**Live app**: https://tich-labs.github.io/yck-incident-tracker/\
-**Interactive guide**: https://tich-labs.github.io/yck-incident-tracker/docs/\
+**Live app**: https://tich-labs.github.io/yck-incident-tracker/
+**Interactive guide**: https://tich-labs.github.io/yck-incident-tracker/docs/
 **Agent card (A2A)**: https://tich-labs.github.io/yck-incident-tracker/docs/agent-card.json\
 **MCP server**: https://yck-incident-tracker-production.up.railway.app/
 
 ## Features
 
-- **Offline-first PWA** — works without internet; queues submissions for sync
-- **SGBV Incident Logging** — structured, trauma-informed intake forms
+- **Offline-first PWA** — works without internet; queues submissions for sync. Install prompt surfaces only on incident tracker and find help pages (not admin)
+- **SGBV Incident Logging** — structured, trauma-informed intake forms with three reporter types (self, on behalf, volunteer)
 - **AI Referral Matching** — matches incidents to verified local services (health, police, shelter, psychosocial, legal)
 - **Risk Assessment** — automated severity scoring with human oversight
 - **FHIR R4 Export** — generates interoperable health bundles (Observation, Patient, Consent, ServiceRequest)
@@ -21,6 +21,7 @@ A trauma-informed, offline-capable Progressive Web App for Youth Changers Kenya 
 - **Multilingual** — English and Swahili
 - **Audit Log** — full action history for accountability
 - **Anonymous Reporting** — reference code system, no PII collected
+- **Reporter Types** — three options per submission: Self (survivor), On Behalf of Survivor (relative/friend), Volunteer (unique Volunteer ID for field workers without accounts)
 
 ## AI Assistant (In-App)
 
@@ -166,7 +167,7 @@ Optional: `GROQ_MODEL`, `OLLAMA_MODEL`, `OPENAI_MODEL` to override defaults. Fal
 See the full walkthrough with screenshots at:\
 https://tich-labs.github.io/yck-incident-tracker/docs/
 
-Covers both the **Survivor Journey** (safety gate → incident form → success page) and the **Admin Journey** (dashboard → incidents → reports → user management → services → manual).
+Covers both the **Survivor Journey** (safety gate → reporter type → 5-step incident form → success page) and the **Admin Journey** (dashboard → incidents → reports → user management → services → manual).
 
 ## License
 

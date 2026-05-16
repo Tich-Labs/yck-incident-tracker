@@ -11,6 +11,8 @@ export type IncidentDraft = {
   offlineId: string;
   savedAt: string;
   retryCount: number;
+  reporterType: string;
+  volunteerId?: string;
   incidentDate: string;
   incidentTime?: string;
   incidentType: string;
@@ -27,8 +29,8 @@ function loadQueue(): IncidentDraft[] {
     const raw = localStorage.getItem(QUEUE_KEY);
     if (!raw) return [];
     const parsed = JSON.parse(raw) as IncidentDraft[];
-    // Migrate older drafts that don't have retryCount
-    return parsed.map((item) => ({ ...item, retryCount: item.retryCount ?? 0 }));
+    // Migrate older drafts that don't have retryCount or reporterType
+    return parsed.map((item) => ({ ...item, retryCount: item.retryCount ?? 0, reporterType: item.reporterType ?? "self" }));
   } catch {
     return [];
   }
@@ -111,6 +113,8 @@ export function useOfflineIncidentQueue() {
     for (const item of eligible) {
       try {
         await createIncident.mutateAsync({
+          reporter_type: item.reporterType,
+          volunteer_id: item.volunteerId,
           incident_date: item.incidentDate,
           incident_time: item.incidentTime,
           incident_type: item.incidentType,

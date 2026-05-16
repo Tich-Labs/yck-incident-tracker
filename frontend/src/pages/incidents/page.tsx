@@ -13,6 +13,9 @@ import {
   AlertTriangle,
   ChevronRight,
   ShieldCheck,
+  User,
+  Users,
+  UserCheck,
   Siren,
   HeartCrack,
   Home,
@@ -26,6 +29,12 @@ import {
   ShieldAlert,
   Smartphone,
 } from "lucide-react";
+const REPORTER_TYPE_CONFIG: Record<string, { label: string; icon: React.ElementType; className: string }> = {
+  self: { label: "Survivor", icon: User, className: "bg-blue-100 text-blue-700 border-blue-200" },
+  on_behalf: { label: "For Someone", icon: Users, className: "bg-purple-100 text-purple-700 border-purple-200" },
+  volunteer: { label: "Volunteer", icon: UserCheck, className: "bg-amber-100 text-amber-700 border-amber-200" },
+};
+
 const STATUS_CONFIG: Record<
   string,
   { label: string; className: string }
@@ -79,6 +88,8 @@ type StatusFilter =
   | "resolved"
   | "closed";
 
+type ReporterFilter = "all" | "self" | "on_behalf" | "volunteer";
+
 const STATUS_TABS: { value: StatusFilter; label: string }[] = [
   { value: "all", label: "All" },
   { value: "new", label: "New" },
@@ -97,6 +108,8 @@ type IncidentItem = {
   isEscalated: boolean;
   incidentDate: string;
   createdAt: string;
+  reporterType?: string;
+  volunteerId?: string;
 };
 
 function IncidentRow({ incident }: { incident: IncidentItem }) {
@@ -117,6 +130,11 @@ function IncidentRow({ incident }: { incident: IncidentItem }) {
           <span className="text-sm font-semibold text-foreground truncate">
             {INCIDENT_TYPE_LABELS[incident.incidentType] ?? incident.incidentType}
           </span>
+          {incident.reporterType && incident.reporterType in REPORTER_TYPE_CONFIG && (
+            <span className={cn("text-[10px] font-medium px-1.5 py-0.5 rounded-sm border", REPORTER_TYPE_CONFIG[incident.reporterType].className)}>
+              {REPORTER_TYPE_CONFIG[incident.reporterType].label}
+            </span>
+          )}
           {incident.isEscalated && (
             <AlertTriangle className="h-3.5 w-3.5 text-destructive flex-shrink-0" />
           )}
@@ -146,17 +164,26 @@ function IncidentRow({ incident }: { incident: IncidentItem }) {
   );
 }
 
+const REPORTER_FILTER_TABS: { value: ReporterFilter; label: string }[] = [
+  { value: "all", label: "All" },
+  { value: "self", label: "Survivor" },
+  { value: "on_behalf", label: "For Someone" },
+  { value: "volunteer", label: "Volunteer" },
+];
+
 function IncidentListInner() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
-
-  const queryArgs =
-    statusFilter === "all"
-      ? {}
-      : { status: statusFilter as Exclude<StatusFilter, "all"> };
+  const [reporterFilter, setReporterFilter] = useState<ReporterFilter>("all");
 
   const { data: results, status } = useSupabaseQueryCamel(supabaseQueries.listIncidents);
 
   const { data: user } = useSupabaseQueryCamel(supabaseQueries.listUsers);
+
+  const filtered = (results || []).filter((incident: any) => {
+    if (statusFilter !== "all" && incident.status !== statusFilter) return false;
+    if (reporterFilter !== "all" && incident.reporterType !== reporterFilter) return false;
+    return true;
+  });
 
   return (
     <div className="pb-8">
@@ -173,7 +200,7 @@ function IncidentListInner() {
           </div>
           {user?.role && user.role !== "pending" && results && (
             <Badge variant="secondary" className="text-xs capitalize">
-              {results.length} shown
+              {filtered.length} shown
             </Badge>
           )}
         </div>
@@ -196,6 +223,30 @@ function IncidentListInner() {
               {tab.label}
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* Reporter type filter tabs */}
+      <div className="border-b border-border overflow-x-auto">
+        <div className="flex px-4 py-2 gap-1 min-w-max">
+          {REPORTER_FILTER_TABS.map((tab) => {
+            const Icon = tab.value === "all" ? null : REPORTER_TYPE_CONFIG[tab.value]?.icon;
+            return (
+              <button
+                key={tab.value}
+                onClick={() => setReporterFilter(tab.value)}
+                className={cn(
+                  "px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1",
+                  reporterFilter === tab.value
+                    ? "bg-secondary text-secondary-foreground"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground"
+                )}
+              >
+                {Icon && <Icon className="h-3.5 w-3.5" />}
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -224,9 +275,13 @@ function IncidentListInner() {
               {statusFilter !== "all" ? "Try a different status filter" : "No incidents have been logged yet"}
             </p>
           </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+            <p className="text-sm font-medium text-muted-foreground">No incidents match the selected filters</p>
+          </div>
         ) : (
           <>
-            {(results || []).map((incident) => (
+            {filtered.map((incident: any) => (
               <IncidentRow key={incident.id} incident={incident as IncidentItem} />
             ))}
           </>

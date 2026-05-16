@@ -16,6 +16,8 @@ import {
   Workflow,
   ChevronRight,
   Heart,
+  Sparkles,
+  Activity,
 } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -30,6 +32,8 @@ export default function Index() {
   const features = [
     { icon: ClipboardList, title: t("features.structuredLogging"), description: t("features.structuredLoggingDesc") },
     { icon: WifiOff, title: t("features.offlinePWA"), description: t("features.offlinePWADesc") },
+    { icon: Sparkles, title: t("features.aiAssistant"), description: t("features.aiAssistantDesc") },
+    { icon: Activity, title: t("features.fhirIntegration"), description: t("features.fhirIntegrationDesc") },
     { icon: Bell, title: t("features.notifications"), description: t("features.notificationsDesc") },
     { icon: Lock, title: t("features.rbac"), description: t("features.rbacDesc") },
     { icon: BarChart3, title: t("features.reporting"), description: t("features.reportingDesc") },
@@ -158,8 +162,8 @@ export default function Index() {
             {[
               { icon: ShieldCheck, label: t("hero.dataPrivacy"), sub: t("hero.dataPrivacySub") },
               { icon: WifiOff, label: t("hero.offlineMode"), sub: t("hero.offlineModeSub") },
-              { icon: Workflow, label: t("hero.autoEscalation"), sub: t("hero.autoEscalationSub") },
-              { icon: Users, label: t("hero.roleLevels"), sub: t("hero.roleLevelsSub") },
+              { icon: Users, label: t("hero.reporterTypes"), sub: t("hero.reporterTypesSub") },
+              { icon: Workflow, label: t("hero.roleLevels"), sub: t("hero.roleLevelsSub") },
             ].map((item, i) => (
               <motion.div
                 key={item.label}
