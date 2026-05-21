@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 
 // https://vite.dev/config/
 export default defineConfig(({ command }) => ({
-  base: command === 'build' ? '/yck-incident-tracker/' : '/',
+  base: command === 'build' ? (process.env.VITE_BASE_URL || '/yck-incident-tracker/') : '/',
   server: {
     host: "0.0.0.0",
     port: 5173,
