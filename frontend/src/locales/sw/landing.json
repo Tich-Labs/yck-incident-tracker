@@ -2,7 +2,7 @@
   "hero.badge": "Salama · Faragha · Inafanya Kazi Bila Mtandao",
   "hero.title1": "Linda Walionusurika.",
   "hero.title2": "Wawezesha Wahudumu.",
-  "hero.description": "Programu ya wavuti iliyoundwa mahususi kwa walionusurika, wanajamii, na wafanyakazi wa kujitolea wa YCK kuripoti matukio kwa usalama, kuendesha mchakato wa majibu kiotomatiki, na kutengeneza ripoti zisizo na majina — hata bila mtandao.",
+  "hero.description": "Programu ya wavuti iliyoundwa mahususi kwa walionusurika, wanajamii, na wafanyakazi wa kujitolea kuripoti matukio kwa usalama, kuendesha mchakato wa majibu kiotomatiki, na kutengeneza ripoti zisizo na majina — hata bila mtandao.",
   "hero.reportIncident": "Ripoti Tukio",
   "hero.openDashboard": "Fungua Dashibodi",
   "hero.dataPrivacy": "Faragha ya Data",
@@ -52,9 +52,9 @@
   "privacy.point3": "Usawazishaji wa nje ya mtandao unamaanisha data haikai bila ulinzi katika kumbukumbu ya kivinjari",
   "privacy.point4": "Data yote imehifadhiwa katika hifadhidata salama, iliyosimbwa",
   "privacy.point5": "Nyaraka za ukaguzi zinafuatilia kila kitendo kinachochukuliwa kwa kila tukio",
-  "privacy.imageAlt": "Programu ya jamii ya YCK",
+  "privacy.imageAlt": "Programu ya jamii",
   "privacy.imageCaption": "Kutumikia vijana na jamii kote Kenya",
   "cta.title": "Uko tayari kuanza?",
-  "cta.description": "Ingia na akaunti yako ya YCK kupata mfumo wa matukio. Kiongozi wako wa Programu atakupa jukumu na ruhusa zako.",
-  "footer.copyright": "© {{year}} Youth Changers Kenya. Haki zote zimehifadhiwa."
+  "cta.description": "Ingia kupata mfumo wa matukio. Msimamizi wa shirika lako atakupa jukumu na ruhusa zako.",
+  "footer.copyright": "© {{year}} Mfumo wa Matukio. Haki zote zimehifadhiwa."
 }

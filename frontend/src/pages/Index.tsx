@@ -61,17 +61,13 @@ export default function Index() {
       {/* Navbar */}
       <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur border-b border-border">
         <div className="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img
-              src="https://cdn.hercules.app/file_c0L6uV4IOlHyt9O6PrReY5vS"
-              alt="YCK Logo"
-              className="h-10 w-10 rounded-md object-cover"
-            />
-            <div>
-              <div className="font-bold text-sm leading-tight text-foreground">
+          <div className="flex flex-col items-start gap-0.5">
+            <img src="/tichlabs.logo.jpeg" alt="Tich Labs" className="h-6 w-auto object-contain" />
+            <div className="leading-tight">
+              <div className="font-bold text-xs text-foreground">
                 {t("app.name", { ns: "common" })}
               </div>
-              <div className="text-xs text-muted-foreground">
+              <div className="text-[10px] text-muted-foreground">
                 {t("app.subtitle", { ns: "common" })}
               </div>
             </div>
@@ -106,10 +102,7 @@ export default function Index() {
       </nav>
 
       {/* Hero */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-[oklch(0.14_0.02_20)] via-[oklch(0.20_0.05_24)] to-[oklch(0.14_0.02_20)] text-white py-24 px-4">
-        {/* Decorative circles */}
-        <div className="absolute top-0 right-0 w-96 h-96 rounded-full bg-primary/10 blur-3xl -translate-y-1/2 translate-x-1/3 pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-64 h-64 rounded-full bg-primary/15 blur-2xl translate-y-1/3 -translate-x-1/4 pointer-events-none" />
+      <section className="relative overflow-hidden bg-[oklch(0.14_0.04_355)] text-white py-24 px-4">
 
         <div className="relative max-w-6xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
           <motion.div
@@ -299,7 +292,7 @@ export default function Index() {
               alt={t("privacy.imageAlt")}
               className="rounded-2xl w-full object-cover shadow-xl h-72 lg:h-96"
             />
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-t from-black/40 to-transparent" />
+            <div className="absolute inset-0 rounded-2xl bg-black/40" />
             <div className="absolute bottom-4 left-4 right-4 text-white">
               <div className="text-sm font-semibold">{t("privacy.imageCaption")}</div>
             </div>
@@ -308,7 +301,7 @@ export default function Index() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-4 bg-gradient-to-br from-[oklch(0.14_0.02_20)] to-[oklch(0.20_0.05_24)] text-white">
+      <section className="py-20 px-4 bg-[oklch(0.14_0.04_355)] text-white">
         <div className="max-w-2xl mx-auto text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -335,14 +328,10 @@ export default function Index() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[oklch(0.12_0.015_20)] text-white/50 py-8 px-4">
+      <footer className="bg-background text-muted-foreground py-8 px-4 border-t border-border">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <img
-              src="https://cdn.hercules.app/file_c0L6uV4IOlHyt9O6PrReY5vS"
-              alt="YCK Logo"
-              className="h-7 w-7 rounded object-cover opacity-70"
-            />
+          <div className="flex flex-col items-center gap-1">
+            <img src="/tichlabs.logo.jpeg" alt="Tich Labs" className="h-6 w-auto object-contain opacity-70" />
             <span className="text-sm">{t("app.name", { ns: "common" })}</span>
           </div>
           <div className="flex items-center gap-3">

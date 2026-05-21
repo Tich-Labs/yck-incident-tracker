@@ -12,12 +12,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select.tsx";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@/components/ui/tooltip.tsx";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils.ts";
 import { format } from "date-fns";
 import {
   ChevronLeft,
   AlertTriangle,
+  Info,
   User,
   Users,
   MapPin,
@@ -36,7 +38,7 @@ import {
   ScrollText,
 } from "lucide-react";
 import AIRecommendations from "@/components/ai-recommendations.tsx";
-import { useSupabaseQuery, useSupabaseQueryCamel, useSupabaseMutation, supabaseMutations } from "@/hooks/use-supabase-query";
+import { useSupabaseQuery, useSupabaseQueryCamel, useSupabaseMutation, supabaseQueries, supabaseMutations } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase";
 import { snakeToCamel } from "@/lib/supabase-utils";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
@@ -93,7 +95,7 @@ function DetailRow({ icon: Icon, label, value }: { icon: React.ElementType; labe
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="px-4 mb-5">
+    <div className="px-4 pt-6 mb-5">
       <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
         {title}
       </h2>
@@ -132,11 +134,21 @@ const STATUS_STEP_INDEX: Record<string, number> = {
   closed: 5,
 };
 
+const WORKFLOW_STAGE_DESCRIPTIONS: Record<WorkflowStatus, string> = {
+  new: "The incident is logged and waiting for assignment.",
+  assigned: "A counselor has been assigned and the case is ready for initial support.",
+  pfa_in_progress: "Psychosocial First Aid is in progress — provide immediate emotional support and safety planning.",
+  under_review: "The case is with senior staff for review.",
+  escalated: "This incident has been escalated for urgent attention.",
+  resolved: "The incident has been resolved. Close when follow-up is complete.",
+  closed: "The case is closed and archived.",
+};
+
 function WorkflowProgress({ status, isEscalated }: { status: string; isEscalated: boolean }) {
   const currentStep = STATUS_STEP_INDEX[status] ?? 0;
   return (
-    <div className="mx-4 mb-5">
-      <div className="rounded-xl border border-border bg-card p-4">
+    <div className="mb-5 overflow-x-auto">
+      <div className="w-full rounded-xl border border-border bg-card p-4">
         {isEscalated && (
           <div className="flex items-center gap-1.5 mb-3 px-2 py-1.5 rounded-lg bg-red-50 border border-red-200">
             <AlertTriangle className="h-3.5 w-3.5 text-red-600 flex-shrink-0" />
@@ -152,7 +164,7 @@ function WorkflowProgress({ status, isEscalated }: { status: string; isEscalated
                 <div className="flex flex-col items-center gap-1">
                   <div
                     className={cn(
-                      "w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 text-xs font-bold transition-colors",
+                      "w-6 h-6 rounded-full flex items-center justify-center shrink-0 text-xs font-bold transition-colors",
                       done
                         ? "bg-primary text-primary-foreground"
                         : active
@@ -170,7 +182,11 @@ function WorkflowProgress({ status, isEscalated }: { status: string; isEscalated
                       active ? "text-foreground" : done ? "text-primary" : "text-muted-foreground/50"
                     )}
                   >
-                    {active && isEscalated && step.status === "under_review" ? "Escalated" : step.label}
+                    {active && step.status === "pfa_in_progress"
+                      ? "PFA (Psychosocial First Aid)"
+                      : active && step.status === "under_review" && isEscalated
+                      ? "Escalated"
+                      : step.label}
                   </span>
                 </div>
                 {i < WORKFLOW_STEPS.length - 1 && (
@@ -184,6 +200,9 @@ function WorkflowProgress({ status, isEscalated }: { status: string; isEscalated
               </div>
             );
           })}
+        </div>
+        <div className="mt-4 rounded-xl border border-border bg-muted/50 p-3 text-sm text-muted-foreground">
+          {WORKFLOW_STAGE_DESCRIPTIONS[status as WorkflowStatus]}
         </div>
       </div>
     </div>
@@ -412,7 +431,7 @@ function WorkflowPanel({
   if (userRole === "volunteer") return null;
 
   return (
-    <div className="px-4 mb-5">
+    <div className="w-full px-4 pt-6 mb-5">
       <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
         Workflow Actions
       </h2>
@@ -427,8 +446,8 @@ function WorkflowPanel({
           >
             <ArrowRightCircle className="h-5 w-5 text-primary flex-shrink-0" />
             <div>
-              <p className="text-sm font-semibold">Start PFA Process</p>
-              <p className="text-xs text-muted-foreground">Begin Psychological First Aid</p>
+              <p className="text-sm font-semibold">Start PFA</p>
+              <p className="text-xs text-muted-foreground">Begin Psychosocial First Aid and safety planning</p>
             </div>
           </button>
         )}
@@ -500,7 +519,7 @@ function WorkflowPanel({
             )}
 
             {/* Resolve */}
-            {["escalated", "under_review", "pfa_in_progress", "assigned"].includes(currentStatus) && (
+            {['escalated', 'under_review'].includes(currentStatus) && (
               <button
                 onClick={() => doStatus("resolved")}
                 disabled={busy}
@@ -568,14 +587,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
       return data;
     }
   );
-  const { data: user } = useSupabaseQueryCamel(
-    async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      if (!authUser) return null;
-      const { data } = await supabase.from('users').select('*').eq('id', authUser.id).single();
-      return data;
-    }
-  );
+  const { data: user } = useSupabaseQueryCamel(supabaseQueries.getCurrentUser);
   const { data: services } = useSupabaseQueryCamel(
     async () => {
       const { data } = await supabase.from('referral_services').select('*').order('name');
@@ -611,7 +623,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
   const userRole = (user?.role ?? "volunteer") as UserRole;
 
   return (
-    <div className="pb-8">
+    <div className="pb-8 px-4 sm:px-6 lg:px-8 w-full">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-3 flex items-center gap-3">
         <Button
@@ -641,6 +653,49 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
         <WorkflowProgress status={incident.status} isEscalated={incident.isEscalated} />
       </div>
 
+      {/* Case summary */}
+      <div className="mt-4 rounded-xl border border-border bg-card p-4">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Case summary</p>
+            <p className="mt-2 text-sm font-medium text-foreground">Key incident details and next step guidance.</p>
+          </div>
+          <span className={cn("text-xs font-medium px-2 py-0.5 rounded-full border", statusConfig.className)}>
+            {statusConfig.label}
+          </span>
+        </div>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-xl border border-border bg-background p-3">
+            <p className="text-xs text-muted-foreground">Assigned</p>
+            <p className="text-sm font-medium text-foreground">{incident.assigneeName ?? "Unassigned"}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-background p-3">
+            <p className="text-xs text-muted-foreground">Logged</p>
+            <p className="text-sm font-medium text-foreground">{format(new Date(incident.createdAt), "MMM d, yyyy")}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-background p-3">
+            <p className="text-xs text-muted-foreground">Location</p>
+            <p className="text-sm font-medium text-foreground">{incident.location}</p>
+          </div>
+          <div className="rounded-xl border border-border bg-background p-3">
+            <div className="flex items-center gap-2">
+              <p className="text-xs text-muted-foreground">Next step</p>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <button className="inline-flex items-center justify-center rounded-full bg-muted/80 p-1 text-muted-foreground hover:bg-muted">
+                    <Info className="h-3.5 w-3.5" />
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="top" align="center">
+                  Psychosocial First Aid is immediate survivor support, safety planning, and needs assessment.
+                </TooltipContent>
+              </Tooltip>
+            </div>
+            <p className="text-sm font-medium text-foreground">{WORKFLOW_STAGE_DESCRIPTIONS[incident.status as WorkflowStatus]}</p>
+          </div>
+        </div>
+      </div>
+
       {/* Escalated banner */}
       {incident.isEscalated && (
         <div className="mx-4 mb-4 flex items-center gap-3 p-3 rounded-xl bg-red-50 border border-red-200">
@@ -656,86 +711,113 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
         </div>
       )}
 
-      {/* Incident details */}
-      <div>
-        <Section title="Incident Details">
-          <DetailRow icon={Calendar} label="Date" value={incident.incidentDate} />
-          {incident.incidentTime && (
-            <DetailRow icon={Clock} label="Time" value={incident.incidentTime} />
-          )}
-          <DetailRow icon={MapPin} label="Location" value={incident.location} />
-          <DetailRow
-            icon={User}
-            label="Survivor"
-            value={`${incident.survivorAgeGroup.replace("_", " ")} · ${incident.survivorGender.replace("_", " ")}`}
-          />
-          {incident.reporterType && (
-            <DetailRow
-              icon={REPORTER_TYPE_ICONS[incident.reporterType] ?? User}
-              label="Reporter"
-              value={REPORTER_TYPE_LABELS[incident.reporterType] ?? incident.reporterType}
-            />
-          )}
-          {incident.volunteerId && (
-            <DetailRow icon={UserCheck} label="Volunteer ID" value={incident.volunteerId} />
-          )}
-          <DetailRow icon={User} label="Submitted By" value={incident.submitterName} />
-          {incident.assigneeName && (
-            <DetailRow icon={UserCheck} label="Assigned To" value={incident.assigneeName} />
-          )}
-        </Section>
+      {/* Two-column layout: content (left) + workflow sidebar (right) */}
+      <div className="lg:grid lg:grid-cols-[minmax(0,1.6fr)_360px] lg:gap-8 lg:items-start w-full">
+        {/* Left column — incident data */}
+        <div className="w-full min-w-0 overflow-hidden">
+          <Section title="Incident Details">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <DetailRow icon={Calendar} label="Date" value={incident.incidentDate} />
+              {incident.incidentTime && (
+                <DetailRow icon={Clock} label="Time" value={incident.incidentTime} />
+              )}
+              <DetailRow icon={MapPin} label="Location" value={incident.location} />
+              <DetailRow
+                icon={User}
+                label="Survivor"
+                value={`${incident.survivorAgeGroup.replace("_", " ")} · ${incident.survivorGender.replace("_", " ")}`}
+              />
+            {incident.reporterType && (
+              <DetailRow
+                icon={REPORTER_TYPE_ICONS[incident.reporterType] ?? User}
+                label="Reporter"
+                value={REPORTER_TYPE_LABELS[incident.reporterType] ?? incident.reporterType}
+              />
+            )}
+            {incident.volunteerId && (
+              <DetailRow icon={UserCheck} label="Volunteer ID" value={incident.volunteerId} />
+            )}
+            <DetailRow icon={User} label="Submitted By" value={incident.submitterName} />
+            {incident.assigneeName && (
+              <DetailRow icon={UserCheck} label="Assigned To" value={incident.assigneeName} />
+            )}
+            </div>
+          </Section>
 
-        {/* Description */}
-        <div className="px-4 mb-5">
-          <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-            Description
-          </h2>
-          <div className="rounded-xl border border-border bg-card p-4">
-            <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-              {incident.description}
+          {/* Description */}
+          <div className="px-4 mb-5">
+            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+              Description
+            </h2>
+            <div className="rounded-xl border border-border bg-card p-4">
+              <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                {incident.description}
+              </p>
+            </div>
+          </div>
+
+          {/* Notes */}
+          {incident.notes && (
+            <div className="px-4 mb-5">
+              <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
+                Case Notes
+              </h2>
+              <div className="rounded-xl border border-border bg-card p-4">
+                <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
+                  {incident.notes}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Resolved info */}
+          {incident.resolvedAt && (
+            <div className="px-4 mb-5">
+              <div className="flex items-center gap-2 p-3 rounded-xl bg-green-50 border border-green-200">
+                <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
+                <p className="text-xs text-green-700 font-medium">
+                  Resolved on {format(new Date(incident.resolvedAt), "MMM d, yyyy 'at' h:mm a")}
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Timestamps */}
+          <div className="px-4 pb-4">
+            <p className="text-xs text-muted-foreground">
+              Logged {format(new Date(incident.createdAt), "MMM d, yyyy 'at' h:mm a")}
             </p>
           </div>
         </div>
 
-        {/* AI Referral Recommendations */}
-        {services && services.length > 0 && (
-          <AIRecommendations
-            incident={incident}
-            services={services}
-            userRole={userRole}
-          />
-        )}
-
-        {/* Notes */}
-        {incident.notes && (
-          <div className="px-4 mb-5">
-            <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
-              Case Notes
-            </h2>
-            <div className="rounded-xl border border-border bg-card p-4">
-              <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-                {incident.notes}
-              </p>
-            </div>
+        {/* Right column — workflow sidebar (desktop) */}
+        <div className="hidden lg:block lg:w-[360px] lg:min-w-0">
+          <div className="w-full">
+            {user && user.role !== "pending" && (
+              <WorkflowPanel
+                incidentId={incidentId}
+                currentStatus={incident.status as WorkflowStatus}
+                userRole={userRole}
+                currentAssigneeId={incident.assignedTo as string | undefined}
+              />
+            )}
           </div>
-        )}
+        </div>
+      </div>
 
-        {/* Resolved info */}
-        {incident.resolvedAt && (
-          <div className="px-4 mb-5">
-            <div className="flex items-center gap-2 p-3 rounded-xl bg-green-50 border border-green-200">
-              <CheckCircle2 className="h-4 w-4 text-green-600 flex-shrink-0" />
-              <p className="text-xs text-green-700 font-medium">
-                Resolved on {format(new Date(incident.resolvedAt), "MMM d, yyyy 'at' h:mm a")}
-              </p>
-            </div>
-          </div>
-        )}
+      {/* Desktop: AI recommendations and timeline in main content flow */}
+      {services && services.length > 0 && (
+        <AIRecommendations
+          incident={incident}
+          services={services}
+          userRole={userRole}
+        />
+      )}
 
-        {/* Audit trail timeline */}
-        <AuditTimeline incidentId={incidentId} userRole={userRole} />
+      <AuditTimeline incidentId={incidentId} userRole={userRole} />
 
-        {/* Workflow panel */}
+      {/* Mobile: workflow items stacked below */}
+      <div className="lg:hidden">
         {user && user.role !== "pending" && (
           <WorkflowPanel
             incidentId={incidentId}
@@ -745,12 +827,15 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
           />
         )}
 
-        {/* Timestamps */}
-        <div className="px-4">
-          <p className="text-xs text-muted-foreground">
-            Logged {format(new Date(incident.createdAt), "MMM d, yyyy 'at' h:mm a")}
-          </p>
-        </div>
+        {services && services.length > 0 && (
+          <AIRecommendations
+            incident={incident}
+            services={services}
+            userRole={userRole}
+          />
+        )}
+
+        <AuditTimeline incidentId={incidentId} userRole={userRole} />
       </div>
     </div>
   );

@@ -1,11 +1,11 @@
 {
-  "name": "YCK Incident Tracker",
-  "short_name": "YCK Tracker",
-  "description": "Youth Changers Kenya — Secure incident logging, workflow management, and anonymized reporting for volunteers and staff.",
+  "name": "Incident Tracker",
+  "short_name": "Incident Tracker",
+  "description": "Secure incident logging, workflow management, and anonymized reporting for volunteers and staff.",
   "start_url": ".",
   "display": "standalone",
   "background_color": "#fcfcfc",
-  "theme_color": "#6b1010",
+  "theme_color": "#7c003f",
   "orientation": "portrait-primary",
   "categories": ["productivity", "utilities"],
   "icons": [

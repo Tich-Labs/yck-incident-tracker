@@ -2,7 +2,7 @@
   "hero.badge": "Secure · Private · Offline-Ready",
   "hero.title1": "Protect Survivors.",
   "hero.title2": "Empower Responders.",
-  "hero.description": "A purpose-built Progressive Web App for survivors, community members, and YCK volunteers to log incidents securely, automate response workflows, and generate anonymized reports — even without internet access.",
+  "hero.description": "A purpose-built Progressive Web App for survivors, community members, and volunteers to log incidents securely, automate response workflows, and generate anonymized reports — even without internet access.",
   "hero.reportIncident": "Report an Incident",
   "hero.openDashboard": "Open Dashboard",
   "hero.dataPrivacy": "Data Privacy",
@@ -52,9 +52,9 @@
   "privacy.point3": "Offline sync means data never sits unprotected in a browser cache",
   "privacy.point4": "All data is stored in a secure, encrypted database",
   "privacy.point5": "Audit trails track every action taken on each incident",
-  "privacy.imageAlt": "YCK community program",
+  "privacy.imageAlt": "Community support program",
   "privacy.imageCaption": "Serving youth and communities across Kenya",
   "cta.title": "Ready to get started?",
-  "cta.description": "Sign in with your YCK account to access the incident tracker. Your Program Lead will assign your role and permissions.",
-  "footer.copyright": "© {{year}} Youth Changers Kenya. All rights reserved."
+  "cta.description": "Sign in to access the incident tracker. Your organization administrator will assign your role and permissions.",
+  "footer.copyright": "© {{year}} Incident Tracker. All rights reserved."
 }

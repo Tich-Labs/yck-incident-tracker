@@ -174,7 +174,7 @@ export default function AIRecommendations({ incident, services, userRole }: AIRe
   const visibleMatches = showAll ? matches : matches.slice(0, 3);
 
   return (
-    <div className="px-4 mb-5">
+    <div className="w-full px-4 mb-5">
       <div className="flex items-center gap-2 mb-3">
         <Sparkles className="h-4 w-4 text-primary" />
         <h2 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
@@ -340,15 +340,7 @@ export default function AIRecommendations({ incident, services, userRole }: AIRe
           </div>
         )}
 
-        {/* No AI key notice */}
-        <div className="px-4 py-2.5 border-t border-border bg-amber-50/50">
-          <div className="flex items-start gap-2 text-[10px] text-muted-foreground">
-            <Info className="h-3 w-3 flex-shrink-0 mt-0.5" />
-            <span>
-              Recommendations use keyword-based matching. Configure <code className="bg-muted px-1 rounded text-[9px]">OPENAI_API_KEY</code> in the MCP server for AI-powered matching.
-            </span>
-          </div>
-        </div>
+
       </div>
     </div>
   );

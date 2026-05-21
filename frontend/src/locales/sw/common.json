@@ -1,6 +1,6 @@
 {
-  "app.name": "Youth Changers Kenya",
-  "app.subtitle": "Mfumo wa Matukio",
+  "app.name": "Mfumo wa Matukio",
+  "app.subtitle": "Usimamizi wa Kesi za SGBV",
   "nav.dashboard": "Dashibodi",
   "nav.logIncident": "Ripoti Tukio",
   "nav.myIncidents": "Matukio Yangu",
@@ -33,5 +33,5 @@
   "sync.pendingSync": "Matukio {{count}} yanasubiri kusawazishwa",
   "sync.syncNow": "Sawazisha sasa",
   "sync.failedSync": "Matukio {{count}} yameshindwa kusawazishwa baada ya majaribio mengi. Tafadhali wasiliana na msaada.",
-  "mobile.title": "Mfumo wa YCK"
+  "mobile.title": "Mfumo wa Matukio"
 }
