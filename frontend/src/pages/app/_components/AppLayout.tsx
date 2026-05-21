@@ -77,16 +77,14 @@ function AppLayoutInner() {
       {/* Logo */}
       <div className="px-4 py-5 border-b border-sidebar-border">
         <div className="flex items-center gap-3">
-          <img
-            src="https://cdn.hercules.app/file_c0L6uV4IOlHyt9O6PrReY5vS"
-            alt="YCK"
-            className="h-9 w-9 rounded-md object-cover"
-          />
-          <div>
-            <div className="text-sm font-bold text-sidebar-foreground leading-tight">
-              Youth Changers
+          <div className="flex flex-col items-center gap-1 w-full">
+            <img src="/tichlabs.logo.jpeg" alt="Tich Labs" className="h-8 w-auto object-contain" />
+            <div className="text-center">
+              <div className="text-sm font-bold text-sidebar-foreground leading-tight">
+                {t("app.name")}
+              </div>
+              <div className="text-xs text-sidebar-foreground/70">{t("app.subtitle")}</div>
             </div>
-            <div className="text-sm text-sidebar-foreground/70">Kenya</div>
           </div>
         </div>
       </div>
@@ -144,7 +142,7 @@ function AppLayoutInner() {
   return (
     <div className="flex h-screen bg-background overflow-hidden">
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex w-60 bg-sidebar flex-col flex-shrink-0">
+      <aside className="hidden md:flex w-60 bg-sidebar border-r border-sidebar-border flex-col flex-shrink-0">
         <NavContent />
       </aside>
 
@@ -201,7 +199,7 @@ function AppLayoutInner() {
         </header>
 
         {/* Page content */}
-        <main className="flex-1 overflow-y-auto">
+        <main className="flex-1 min-w-0 overflow-y-auto overflow-x-hidden">
           <Outlet />
         </main>
       </div>

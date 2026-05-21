@@ -23,7 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.t
 import { toast } from "sonner";
 import { cn } from "@/lib/utils.ts";
 import { formatDistanceToNow } from "date-fns";
-import { useSupabaseQueryCamel, supabaseQueries, supabaseMutations, ConvexError } from "@/hooks/use-supabase-query";
+import { useSupabaseQueryCamel, useSupabaseMutation, supabaseQueries, supabaseMutations, ConvexError } from "@/hooks/use-supabase-query";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 import {
   Users,

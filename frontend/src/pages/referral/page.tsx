@@ -19,6 +19,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LocaleSwitcher from "@/components/locale-switcher.tsx";
+import { useSupabaseQuery } from "@/hooks/use-supabase-query";
 
 type CategoryFilter = "health" | "police" | "shelter" | "psychosocial" | "legal" | null;
 type CountyFilter = "kakamega" | "vihiga" | null;
@@ -85,7 +86,7 @@ export default function ReferralDirectoryPage() {
 
       <div className="max-w-5xl mx-auto px-4 py-6">
         {/* Pathway info box */}
-        <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl border border-blue-200 bg-blue-50 text-blue-800 text-sm mb-6">
+        <div className="flex items-start gap-2.5 px-4 py-3 rounded-xl border border-primary/20 bg-primary/5 text-primary text-sm mb-6">
           <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
           <div className="leading-relaxed text-xs">
             <strong>{t("pathway.title")}</strong> {t("pathway.body")}

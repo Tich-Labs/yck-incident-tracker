@@ -1,3 +1,6 @@
+import { useState } from "react";
+import { useSupabaseQuery, useSupabaseMutation, supabaseQueries, supabaseMutations } from "@/hooks/use-supabase-query";
+
 function AdminServicesInner() {
   const { data: user, isLoading: userLoading } = useSupabaseQuery(
     supabaseQueries.getCurrentUser

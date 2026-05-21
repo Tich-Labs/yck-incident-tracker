@@ -221,7 +221,7 @@ function StepIncidentType({ data, onChange, t }: { data: FormData; onChange: (f:
         <p className="text-sm text-muted-foreground">{t("step1.instruction")}</p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
         {INCIDENT_TYPE_VALUES.map((typeValue) => {
           const Icon = INCIDENT_TYPE_ICONS[typeValue];
           const isSelected = data.incidentType === typeValue;
@@ -257,7 +257,7 @@ function StepIncidentType({ data, onChange, t }: { data: FormData; onChange: (f:
         </div>
       )}
 
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label htmlFor="incidentDate" className="text-sm font-medium">
             {t("step1.dateLabel")} <span className="text-destructive">*</span>
@@ -372,7 +372,7 @@ function StepSurvivorInfo({ data, onChange, t }: { data: FormData; onChange: (f:
         <Label className="text-sm font-medium">
           {t("step3.genderLabel")} <span className="text-destructive">*</span>
         </Label>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {GENDER_VALUES.map((g) => (
             <button
               key={g}
@@ -447,7 +447,7 @@ function StepReviewSubmit({ data, onChange, t }: { data: FormData; onChange: (f:
               {t("step4.refHint")}
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
             <div className="space-y-1.5">
               <Label htmlFor="refInitials" className="text-xs text-muted-foreground">
                 {t("step4.initialsLabel")}
