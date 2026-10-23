@@ -36,9 +36,10 @@ import {
   ScrollText,
 } from "lucide-react";
 import AIRecommendations from "@/components/ai-recommendations.tsx";
-import { useSupabaseQuery, useSupabaseQueryCamel, useSupabaseMutation, supabaseMutations } from "@/hooks/use-supabase-query";
+import { useSupabaseQuery, useSupabaseQueryCamel, useSupabaseMutation, supabaseMutations, isDemoMode } from "@/hooks/use-supabase-query";
 import { supabase } from "@/lib/supabase";
 import { snakeToCamel } from "@/lib/supabase-utils";
+import { DEMO_INCIDENTS, DEMO_SERVICES } from "@/lib/demo-data";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   new: { label: "New", className: "bg-blue-100 text-blue-800 border-blue-200" },
@@ -564,6 +565,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
   const navigate = useNavigate();
   const { data: incident } = useSupabaseQueryCamel(
     async () => {
+      if (await isDemoMode()) return DEMO_INCIDENTS.find(i => i.id === incidentId) ?? null;
       const { data } = await supabase.from('incidents').select('*').eq('id', incidentId).single();
       return data;
     }
@@ -578,6 +580,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
   );
   const { data: services } = useSupabaseQueryCamel(
     async () => {
+      if (await isDemoMode()) return DEMO_SERVICES;
       const { data } = await supabase.from('referral_services').select('*').order('name');
       return data ?? [];
     }

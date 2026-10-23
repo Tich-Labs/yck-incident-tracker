@@ -1,6 +1,18 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { snakeToCamel } from '@/lib/supabase-utils'
+import { DEMO_INCIDENTS, DEMO_SERVICES, DEMO_USERS } from '@/lib/demo-data'
+
+// True when there is no authenticated session — anonymous/demo viewers only.
+// Real signed-in users keep reading live data; demo data never replaces theirs.
+export async function isDemoMode(): Promise<boolean> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession()
+    return !session
+  } catch {
+    return true
+  }
+}
 
 // Hook for querying Supabase data
 export function useSupabaseQuery<T>(queryFn?: () => Promise<T>) {
@@ -53,6 +65,7 @@ export const supabaseQueries = {
   },
   
   listUsers: async () => {
+    if (await isDemoMode()) return DEMO_USERS
     const { data, error } = await supabase
       .from('users')
       .select('*')
@@ -60,8 +73,9 @@ export const supabaseQueries = {
     if (error) throw error
     return data
   },
-  
+
   listServices: async () => {
+    if (await isDemoMode()) return DEMO_SERVICES
     const { data, error } = await supabase
       .from('referral_services')
       .select('*')
@@ -69,8 +83,9 @@ export const supabaseQueries = {
     if (error) throw error
     return data
   },
-  
+
   listIncidents: async () => {
+    if (await isDemoMode()) return DEMO_INCIDENTS
     const { data, error } = await supabase
       .from('incidents')
       .select('*')
@@ -80,6 +95,14 @@ export const supabaseQueries = {
   },
 
   getDashboardStats: async () => {
+    if (await isDemoMode()) {
+      const total = DEMO_INCIDENTS.length
+      const newCount = DEMO_INCIDENTS.filter(i => i.status === 'new').length
+      const inProgress = DEMO_INCIDENTS.filter(i => ['assigned', 'pfa_in_progress', 'under_review'].includes(i.status)).length
+      const escalated = DEMO_INCIDENTS.filter(i => i.status === 'escalated').length
+      const resolved = DEMO_INCIDENTS.filter(i => ['resolved', 'closed'].includes(i.status)).length
+      return { total, new: newCount, inProgress, escalated, resolved }
+    }
     const { data, error } = await supabase
       .from('incidents')
       .select('status')
@@ -93,6 +116,7 @@ export const supabaseQueries = {
   },
 
   getEscalatedIncidents: async () => {
+    if (await isDemoMode()) return DEMO_INCIDENTS.filter(i => i.status === 'escalated').slice(0, 5)
     const { data, error } = await supabase
       .from('incidents')
       .select('*')
@@ -104,6 +128,7 @@ export const supabaseQueries = {
   },
 
   getNewIncidents: async () => {
+    if (await isDemoMode()) return DEMO_INCIDENTS.filter(i => i.status === 'new').slice(0, 5)
     const { data, error } = await supabase
       .from('incidents')
       .select('*')
