@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Skeleton } from "@/components/ui/skeleton.tsx";
@@ -114,12 +114,13 @@ type IncidentItem = {
 
 function IncidentRow({ incident }: { incident: IncidentItem }) {
   const navigate = useNavigate();
+  const { lng } = useParams<{ lng: string }>();
   const config = STATUS_CONFIG[incident.status] ?? { label: incident.status, className: "" };
   const Icon = INCIDENT_ICONS[incident.incidentType] ?? FileQuestion;
 
   return (
     <button
-      onClick={() => navigate(`/incidents/${incident.id}`)}
+      onClick={() => navigate(`/${lng}/incidents/${incident.id}`)}
       className="w-full flex items-center gap-3 px-4 py-3.5 hover:bg-muted/50 transition-colors text-left border-b border-border last:border-0"
     >
       <div className="w-9 h-9 rounded-lg bg-muted flex items-center justify-center flex-shrink-0">

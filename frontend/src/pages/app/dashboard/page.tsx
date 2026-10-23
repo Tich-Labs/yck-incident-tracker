@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button.tsx";
 import { Card, CardContent } from "@/components/ui/card.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
@@ -224,6 +224,7 @@ function PendingDashboard({ name }: { name?: string }) {
 // ─── Volunteer dashboard ──────────────────────────────────────────────────────
 function VolunteerDashboard({ name }: { name?: string }) {
   const navigate = useNavigate();
+  const { lng } = useParams<{ lng: string }>();
   const stats = useSupabaseQueryCamel<{ total: number; new: number; inProgress: number; escalated: number; resolved: number }>(supabaseQueries.getDashboardStats);
   const incidents = useSupabaseQueryCamel<any[]>(supabaseQueries.listIncidents);
 
@@ -240,7 +241,7 @@ function VolunteerDashboard({ name }: { name?: string }) {
             <h1 className="text-2xl font-bold">{name?.split(" ")[0] ?? "Volunteer"}</h1>
             <Badge variant="secondary" className="mt-1.5 text-xs">Volunteer</Badge>
           </div>
-          <Button size="sm" onClick={() => navigate("/incidents/new")} className="flex-shrink-0 mt-1">
+          <Button size="sm" onClick={() => navigate(`/${lng}/incidents/new`)} className="flex-shrink-0 mt-1">
             <ClipboardPlus className="h-4 w-4 mr-1.5" />
             Log Incident
           </Button>
@@ -258,7 +259,7 @@ function VolunteerDashboard({ name }: { name?: string }) {
       {/* Quick action */}
       <div className="px-4 mt-6">
         <button
-          onClick={() => navigate("/incidents/new")}
+          onClick={() => navigate(`/${lng}/incidents/new`)}
           className="w-full flex items-center gap-4 p-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
         >
           <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center">
@@ -276,7 +277,7 @@ function VolunteerDashboard({ name }: { name?: string }) {
       <div className="px-4 mt-6">
         <div className="flex items-center justify-between mb-3">
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">All Incidents</h2>
-          <button onClick={() => navigate("/incidents")} className="text-xs text-primary font-medium">
+          <button onClick={() => navigate(`/${lng}/incidents`)} className="text-xs text-primary font-medium">
             View all
           </button>
         </div>
@@ -297,7 +298,7 @@ function VolunteerDashboard({ name }: { name?: string }) {
             <div className="py-10 text-center">
               <CheckCircle2 className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground">No incidents logged yet</p>
-              <Button variant="secondary" size="sm" className="mt-3" onClick={() => navigate("/incidents/new")}>
+              <Button variant="secondary" size="sm" className="mt-3" onClick={() => navigate(`/${lng}/incidents/new`)}>
                 Log First Incident
               </Button>
             </div>
@@ -306,7 +307,7 @@ function VolunteerDashboard({ name }: { name?: string }) {
               <IncidentRow
                 key={inc.id}
                 incident={inc as RecentIncident}
-                onClick={() => navigate(`/incidents/${inc.id}`)}
+                onClick={() => navigate(`/${lng}/incidents/${inc.id}`)}
               />
             ))
           )}
@@ -319,6 +320,7 @@ function VolunteerDashboard({ name }: { name?: string }) {
 // ─── Staff dashboard (counselor / program_lead / exec_director) ───────────────
 function StaffDashboard({ name, role }: { name?: string; role: string }) {
   const navigate = useNavigate();
+  const { lng } = useParams<{ lng: string }>();
   const stats = useSupabaseQueryCamel<{ total: number; new: number; inProgress: number; escalated: number; resolved: number }>(supabaseQueries.getDashboardStats);
   const escalated = useSupabaseQueryCamel<any[]>(supabaseQueries.getEscalatedIncidents);
   const newIncidents = useSupabaseQueryCamel<any[]>(supabaseQueries.getNewIncidents);
@@ -337,7 +339,7 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
               {ROLE_LABELS[role] ?? role}
             </Badge>
           </div>
-          <Button size="sm" onClick={() => navigate("/incidents")} className="flex-shrink-0 mt-1">
+          <Button size="sm" onClick={() => navigate(`/${lng}/incidents`)} className="flex-shrink-0 mt-1">
             <ListFilter className="h-4 w-4 mr-1.5" />
             All Incidents
           </Button>
@@ -376,7 +378,7 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
                 <IncidentRow
                   key={inc.id}
                   incident={inc as RecentIncident}
-                  onClick={() => navigate(`/incidents/${inc.id}`)}
+                  onClick={() => navigate(`/${lng}/incidents/${inc.id}`)}
                 />
               ))
             )}
@@ -390,7 +392,7 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
           <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide">
             New — Awaiting Assignment
           </h2>
-          <button onClick={() => navigate("/incidents?status=new")} className="text-xs text-primary font-medium">
+          <button onClick={() => navigate(`/${lng}/incidents?status=new`)} className="text-xs text-primary font-medium">
             View all
           </button>
         </div>
@@ -417,7 +419,7 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
               <IncidentRow
                 key={inc.id}
                 incident={inc as RecentIncident}
-                onClick={() => navigate(`/incidents/${inc.id}`)}
+                onClick={() => navigate(`/${lng}/incidents/${inc.id}`)}
               />
             ))
           )}
@@ -432,7 +434,7 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
           </h2>
           <div className="grid grid-cols-1 gap-2">
             <button
-              onClick={() => navigate("/incidents")}
+              onClick={() => navigate(`/${lng}/incidents`)}
               className="flex items-center gap-4 p-4 rounded-xl bg-primary text-primary-foreground hover:bg-primary/90 transition-all"
             >
               <div className="w-10 h-10 rounded-lg bg-white/15 flex items-center justify-center">
@@ -445,7 +447,7 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
               <ChevronRight className="h-4 w-4 ml-auto opacity-70" />
             </button>
             <button
-              onClick={() => navigate("/users")}
+              onClick={() => navigate(`/${lng}/users`)}
               className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-muted/30 transition-all"
             >
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -458,7 +460,7 @@ function StaffDashboard({ name, role }: { name?: string; role: string }) {
               <ChevronRight className="h-4 w-4 ml-auto text-muted-foreground" />
             </button>
             <button
-              onClick={() => navigate("/audit")}
+              onClick={() => navigate(`/${lng}/audit`)}
               className="flex items-center gap-4 p-4 rounded-xl bg-card border border-border hover:border-primary/30 hover:bg-muted/30 transition-all"
             >
               <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">

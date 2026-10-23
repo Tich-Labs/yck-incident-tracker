@@ -563,6 +563,7 @@ function WorkflowPanel({
 
 function IncidentDetailInner({ incidentId }: { incidentId: string }) {
   const navigate = useNavigate();
+  const { lng } = useParams<{ lng: string }>();
   const { data: incident } = useSupabaseQueryCamel(
     async () => {
       if (await isDemoMode()) return DEMO_INCIDENTS.find(i => i.id === incidentId) ?? null;
@@ -601,7 +602,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-4 text-center gap-3">
         <AlertTriangle className="h-10 w-10 text-muted-foreground/40" />
         <p className="font-semibold">Incident not found</p>
-        <Button variant="secondary" size="sm" onClick={() => navigate("/incidents")}>
+        <Button variant="secondary" size="sm" onClick={() => navigate(`/${lng}/incidents`)}>
           Back to List
         </Button>
       </div>
@@ -621,7 +622,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
           variant="ghost"
           size="icon"
           className="h-9 w-9 flex-shrink-0"
-          onClick={() => navigate("/incidents")}
+          onClick={() => navigate(`/${lng}/incidents`)}
         >
           <ChevronLeft className="h-5 w-5" />
         </Button>

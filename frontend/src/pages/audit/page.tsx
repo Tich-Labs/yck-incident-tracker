@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { Card } from "@/components/ui/card.tsx";
 import { Button } from "@/components/ui/button.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
@@ -50,6 +50,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 function AuditLogList() {
   const navigate = useNavigate();
+  const { lng } = useParams<{ lng: string }>();
   const { results, status, loadMore } = usePaginatedQuery(
     null,
     {},
@@ -90,7 +91,7 @@ function AuditLogList() {
             return (
               <button
                 key={entry._id}
-                onClick={() => navigate(`/incidents/${entry.incidentId}`)}
+                onClick={() => navigate(`/${lng}/incidents/${entry.incidentId}`)}
                 className="w-full flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left cursor-pointer"
               >
                 <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5", config.colorClass)}>
@@ -150,12 +151,13 @@ function AuditLogList() {
 
 export default function AuditLogPage() {
   const navigate = useNavigate();
+  const { lng } = useParams<{ lng: string }>();
 
   return (
     <div className="pb-8">
       {/* Header */}
       <div className="sticky top-0 z-10 bg-background border-b border-border px-4 py-3 flex items-center gap-3">
-        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => navigate("/dashboard")}>
+        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => navigate(`/${lng}/dashboard`)}>
           <ChevronLeft className="h-5 w-5" />
         </Button>
         <div className="flex items-center gap-2 flex-1">
