@@ -32,6 +32,15 @@ const SurvivorLayout = () => (
   </>
 );
 
+function RootRedirect() {
+  const p = new URLSearchParams(window.location.search).get("p");
+  const target =
+    p && p.startsWith("/")
+      ? setLocaleInPath(SAVED_OR_DEFAULT_LOCALE, p)
+      : setLocaleInPath(SAVED_OR_DEFAULT_LOCALE, "/");
+  return <Navigate to={target} replace />;
+}
+
 export default function App() {
   useServiceWorker();
 
@@ -40,11 +49,8 @@ export default function App() {
       <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '')}>
         <Suspense fallback={<div></div>}>
           <Routes>
-            {/* Root: redirect to saved/default locale */}
-            <Route
-              path="/"
-              element={<Navigate to={setLocaleInPath(SAVED_OR_DEFAULT_LOCALE, "/")} replace />}
-            />
+            {/* Root: follow the ?p= deep-link set by public/404.html, else saved/default locale */}
+            <Route path="/" element={<RootRedirect />} />
 
             {/* Non-localized routes (auth) */}
             <Route path="/auth/callback" element={<AuthCallback />} />
