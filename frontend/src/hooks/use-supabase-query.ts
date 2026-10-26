@@ -14,6 +14,16 @@ export async function isDemoMode(): Promise<boolean> {
   }
 }
 
+// Build-time switch for review/demo builds. When "true", anonymous visitors
+// cannot write to Supabase: saves are refused with a message instead.
+export const READ_ONLY_DEMO = import.meta.env.VITE_READ_ONLY_DEMO === 'true'
+
+export const DEMO_WRITE_BLOCKED_MESSAGE = 'Demo mode: nothing was saved.'
+
+export async function isWriteBlocked(): Promise<boolean> {
+  return READ_ONLY_DEMO && (await isDemoMode())
+}
+
 // Hook for querying Supabase data
 export function useSupabaseQuery<T>(queryFn?: () => Promise<T>) {
   return useQuery({
@@ -225,6 +235,7 @@ export function usePaginatedQuery(name: any, args?: any, opts?: any) {
 // Common mutation factories
 export const supabaseMutations = {
   createService: async (service: any) => {
+    if (await isWriteBlocked()) throw new Error(DEMO_WRITE_BLOCKED_MESSAGE)
     const { data, error } = await supabase
       .from('referral_services')
       .insert(service)
@@ -235,6 +246,7 @@ export const supabaseMutations = {
   },
   
   updateService: async ({ id, isActive, ...updates }: any) => {
+    if (await isWriteBlocked()) throw new Error(DEMO_WRITE_BLOCKED_MESSAGE)
     const patch: Record<string, unknown> = { ...updates }
     if (isActive !== undefined) patch.is_active = isActive
     const { data, error } = await supabase
@@ -248,6 +260,7 @@ export const supabaseMutations = {
   },
   
   deleteService: async (id: string) => {
+    if (await isWriteBlocked()) throw new Error(DEMO_WRITE_BLOCKED_MESSAGE)
     const { error } = await supabase
       .from('referral_services')
       .delete()
@@ -256,6 +269,7 @@ export const supabaseMutations = {
   },
   
   updateUserRole: async ({ userId, role }: { userId: string; role: string }) => {
+    if (await isWriteBlocked()) throw new Error(DEMO_WRITE_BLOCKED_MESSAGE)
     const { data, error } = await supabase
       .from('users')
       .update({ role })
@@ -267,6 +281,7 @@ export const supabaseMutations = {
   },
   
   toggleUserActive: async ({ userId, isActive }: { userId: string; isActive: boolean }) => {
+    if (await isWriteBlocked()) throw new Error(DEMO_WRITE_BLOCKED_MESSAGE)
     const { data, error } = await supabase
       .from('users')
       .update({ is_active: isActive })

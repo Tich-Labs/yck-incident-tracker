@@ -13,6 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select.tsx";
 import { toast } from "sonner";
+import { isWriteBlocked, DEMO_WRITE_BLOCKED_MESSAGE } from "@/hooks/use-supabase-query";
 import { cn } from "@/lib/utils.ts";
 import { useOfflineIncidentQueue } from "@/hooks/use-offline-incident-queue.ts";
 import { useSupabaseMutation } from "@/hooks/use-supabase-query";
@@ -663,6 +664,10 @@ export default function NewIncidentPage() {
 
   const handleSubmit = async () => {
     if (!form.reporterType || !form.incidentType || !form.survivorAgeGroup || !form.survivorGender) return;
+    if (await isWriteBlocked()) {
+      toast.info(DEMO_WRITE_BLOCKED_MESSAGE);
+      return;
+    }
     setSubmitting(true);
 
     // Offline — queue and redirect
