@@ -19,6 +19,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import LocaleSwitcher from "@/components/locale-switcher.tsx";
+import { useSupabaseQueryCamel, supabaseQueries } from "@/hooks/use-supabase-query";
 
 type CategoryFilter = "health" | "police" | "shelter" | "psychosocial" | "legal" | null;
 type CountyFilter = "kakamega" | "vihiga" | null;
@@ -44,9 +45,10 @@ export default function ReferralDirectoryPage() {
     { id: "vihiga" as const, label: t("counties.vihiga") },
   ];
 
-  const services = useSupabaseQuery();
-
-  const isLoading = services === undefined;
+  const { data: servicesData, isLoading } = useSupabaseQueryCamel<any[]>(
+    supabaseQueries.listServices
+  );
+  const services = servicesData ?? [];
 
   return (
     <div className="min-h-screen bg-background">
@@ -67,7 +69,7 @@ export default function ReferralDirectoryPage() {
           </div>
           <LocaleSwitcher className="hidden sm:inline-flex" />
           <Badge variant="secondary" className="text-xs">
-            {services?.length ?? "..."} {tc("common.services")}
+            {isLoading ? "..." : services.length} {tc("common.services")}
           </Badge>
         </div>
       </header>
@@ -200,7 +202,7 @@ export default function ReferralDirectoryPage() {
                   <div className="grid gap-2">
                     {catServices.map((service) => (
                       <div
-                        key={service._id}
+                        key={service.id}
                         className="flex items-start gap-3 p-3 rounded-xl border border-border bg-card hover:border-primary/20 transition-colors"
                       >
                         <div className={cn("w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 mt-0.5", cat.color.split(" ")[0])}>

@@ -18,7 +18,8 @@ import {
 } from "recharts";
 import { Download, AlertTriangle, FileText, TrendingUp, Activity } from "lucide-react";
 import { cn } from "@/lib/utils.ts";
-import { useSupabaseQuery } from "@/hooks/use-supabase-query";
+import { useQuery } from "@tanstack/react-query";
+import { useSupabaseQueryCamel, supabaseQueries } from "@/hooks/use-supabase-query";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 
 // ─── Label maps ──────────────────────────────────────────────────────────────
@@ -210,14 +211,26 @@ function ReportsPageInner() {
     [preset, customFrom, customTo]
   );
 
-  const reportData = useSupabaseQuery();
-  const exportData = useSupabaseQuery();
-  const userProfile = useSupabaseQuery();
+  const {
+    data: reportData,
+    isLoading: reportLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["reports", dateRange.from, dateRange.to],
+    queryFn: () => supabaseQueries.getReports(dateRange),
+  });
+  const { data: userProfile } = useSupabaseQueryCamel<any>(
+    supabaseQueries.getCurrentUser
+  );
 
   const handleExportCSV = useCallback(() => {
-    if (!exportData || exportData.length === 0) return;
-    generateAndDownloadCSV(exportData as ExportRow[], `yck-incidents-${dateRange.from}-to-${dateRange.to}.csv`);
-  }, [exportData, dateRange]);
+    if (!reportData?.exportRows?.length) return;
+    generateAndDownloadCSV(
+      reportData.exportRows as ExportRow[],
+      `yck-incidents-${dateRange.from}-to-${dateRange.to}.csv`
+    );
+  }, [reportData, dateRange]);
 
   // Access guard — only program leads and executive directors
   if (
@@ -277,7 +290,7 @@ function ReportsPageInner() {
         </div>
         <Button
           onClick={handleExportCSV}
-          disabled={!exportData || exportData.length === 0}
+          disabled={!reportData?.exportRows?.length}
           size="sm"
           className="gap-2"
         >
@@ -339,7 +352,17 @@ function ReportsPageInner() {
       </Card>
 
       {/* Summary Stats */}
-      {reportData === undefined ? (
+      {isError ? (
+        <Card>
+          <CardContent className="flex flex-col items-center justify-center py-12 gap-2 text-center">
+            <AlertTriangle className="w-8 h-8 text-destructive" />
+            <p className="text-sm font-medium">Could not load reports</p>
+            <p className="text-xs text-muted-foreground">
+              {(error as Error)?.message ?? "Unknown error"}
+            </p>
+          </CardContent>
+        </Card>
+      ) : reportLoading || !reportData ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-24 w-full rounded-xl" />
@@ -394,7 +417,7 @@ function ReportsPageInner() {
       )}
 
       {/* Charts */}
-      {reportData === undefined ? (
+      {isError ? null : reportLoading || !reportData ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {Array.from({ length: 4 }).map((_, i) => (
             <Skeleton key={i} className="h-64 w-full rounded-xl" />

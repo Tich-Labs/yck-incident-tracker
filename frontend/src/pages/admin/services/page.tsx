@@ -5,9 +5,13 @@ import { Button } from "@/components/ui/button.tsx";
 import { Badge } from "@/components/ui/badge.tsx";
 import { Input } from "@/components/ui/input.tsx";
 import { Textarea } from "@/components/ui/textarea.tsx";
-import { useSupabaseQuery, useSupabaseMutation } from "@/hooks/use-supabase-query";
+import {
+  useSupabaseQueryCamel,
+  useSupabaseMutation,
+  supabaseQueries,
+  supabaseMutations,
+} from "@/hooks/use-supabase-query";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
-import type { Id } from "@/types/supabase";
 import {
   Dialog,
   DialogContent,
@@ -81,22 +85,27 @@ const EMPTY_FORM: FormData = {
 // ─── Inner page ──────────────────────────────────────────────────────────────
 
 function AdminServicesInner() {
-  const user = useSupabaseQuery();
-  const services = useSupabaseQuery();
-  const createService = useSupabaseMutation();
-  const updateService = useSupabaseMutation();
-  const removeService = useSupabaseMutation();
+  const { data: user, isLoading: userLoading } = useSupabaseQueryCamel<any>(
+    supabaseQueries.getCurrentUser
+  );
+  const { data: servicesData, isLoading: servicesLoading } = useSupabaseQueryCamel<any[]>(
+    supabaseQueries.listServices
+  );
+  const services = servicesData ?? [];
+  const createService = useSupabaseMutation<any, any>(supabaseMutations.createService);
+  const updateService = useSupabaseMutation<any, any>(supabaseMutations.updateService);
+  const removeService = useSupabaseMutation<any, any>(supabaseMutations.deleteService);
 
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [editingId, setEditingId] = useState<Id<"referralServices"> | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<FormData>(EMPTY_FORM);
-  const [deleteConfirmId, setDeleteConfirmId] = useState<Id<"referralServices"> | null>(null);
+  const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterCategory, setFilterCategory] = useState<Category | "all">("all");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Loading state
-  if (user === undefined || services === undefined) {
+  if (userLoading || servicesLoading) {
     return (
       <div className="p-6 space-y-3">
         <Skeleton className="h-10 w-48" />
@@ -146,7 +155,7 @@ function AdminServicesInner() {
 
   // Open dialog for edit
   const handleEdit = (service: (typeof services)[number]) => {
-    setEditingId(service._id);
+    setEditingId(service.id);
     setForm({
       name: service.name,
       category: service.category,
@@ -167,7 +176,7 @@ function AdminServicesInner() {
     setIsSubmitting(true);
     try {
       if (editingId) {
-        await updateService({
+        await updateService.mutateAsync({
           id: editingId,
           name: form.name.trim(),
           category: form.category,
@@ -178,7 +187,7 @@ function AdminServicesInner() {
         });
         toast.success("Service updated");
       } else {
-        await createService({
+        await createService.mutateAsync({
           name: form.name.trim(),
           category: form.category,
           county: form.county,
@@ -190,29 +199,19 @@ function AdminServicesInner() {
       }
       setDialogOpen(false);
     } catch (error) {
-      if (error instanceof ConvexError) {
-        const { message } = error.data as { code: string; message: string };
-        toast.error(message);
-      } else {
-        toast.error("Something went wrong");
-      }
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   // Toggle active/inactive
-  const handleToggleActive = async (id: Id<"referralServices">, currentlyActive: boolean) => {
+  const handleToggleActive = async (id: string, currentlyActive: boolean) => {
     try {
-      await updateService({ id, isActive: !currentlyActive });
+      await updateService.mutateAsync({ id, isActive: !currentlyActive });
       toast.success(currentlyActive ? "Service deactivated" : "Service activated");
     } catch (error) {
-      if (error instanceof ConvexError) {
-        const { message } = error.data as { code: string; message: string };
-        toast.error(message);
-      } else {
-        toast.error("Something went wrong");
-      }
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     }
   };
 
@@ -220,16 +219,11 @@ function AdminServicesInner() {
   const handleDelete = async () => {
     if (!deleteConfirmId) return;
     try {
-      await removeService({ id: deleteConfirmId });
+      await removeService.mutateAsync({ id: deleteConfirmId });
       toast.success("Service deleted");
       setDeleteConfirmId(null);
     } catch (error) {
-      if (error instanceof ConvexError) {
-        const { message } = error.data as { code: string; message: string };
-        toast.error(message);
-      } else {
-        toast.error("Something went wrong");
-      }
+      toast.error(error instanceof Error ? error.message : "Something went wrong");
     }
   };
 
@@ -314,7 +308,7 @@ function AdminServicesInner() {
 
             return (
               <div
-                key={service._id}
+                key={service.id}
                 className={cn(
                   "grid grid-cols-1 sm:grid-cols-[1fr_120px_100px_100px_90px] gap-2 sm:gap-3 px-4 py-3 border-b border-border last:border-0 items-center",
                   !service.isActive && "opacity-50"
@@ -357,7 +351,7 @@ function AdminServicesInner() {
                 {/* Status toggle */}
                 <div>
                   <button
-                    onClick={() => handleToggleActive(service._id, service.isActive)}
+                    onClick={() => handleToggleActive(service.id, service.isActive)}
                     className="cursor-pointer flex items-center gap-1 text-xs"
                     title={service.isActive ? "Deactivate" : "Activate"}
                   >
@@ -390,7 +384,7 @@ function AdminServicesInner() {
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-destructive hover:text-destructive cursor-pointer"
-                    onClick={() => setDeleteConfirmId(service._id)}
+                    onClick={() => setDeleteConfirmId(service.id)}
                     title="Delete"
                   >
                     <Trash2 className="h-3.5 w-3.5" />

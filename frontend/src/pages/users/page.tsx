@@ -23,7 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card.t
 import { toast } from "sonner";
 import { cn } from "@/lib/utils.ts";
 import { formatDistanceToNow } from "date-fns";
-import { useSupabaseQueryCamel, supabaseQueries, supabaseMutations, ConvexError } from "@/hooks/use-supabase-query";
+import { useSupabaseQueryCamel, useSupabaseMutation, supabaseQueries, supabaseMutations } from "@/hooks/use-supabase-query";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 import {
   Users,
@@ -316,15 +316,11 @@ function UserRow({
     setRoleValue(role);
     setBusy(true);
     try {
-      await updateRole({ userId: user.id, role });
+      await updateRole.mutateAsync({ userId: user.id, role });
       toast.success(`Role updated to ${ROLE_CONFIG[role]?.label ?? role}`);
     } catch (err) {
       setRoleValue(user.role);
-      if (err instanceof ConvexError) {
-        toast.error((err.data as { message: string }).message);
-      } else {
-        toast.error("Failed to update role");
-      }
+      toast.error(err instanceof Error ? err.message : "Failed to update role");
     } finally {
       setBusy(false);
     }
@@ -333,14 +329,10 @@ function UserRow({
   const handleReactivate = async () => {
     setBusy(true);
     try {
-      await toggleActive({ userId: user.id });
+      await toggleActive.mutateAsync({ userId: user.id, isActive: true });
       toast.success("User reactivated");
     } catch (err) {
-      if (err instanceof ConvexError) {
-        toast.error((err.data as { message: string }).message);
-      } else {
-        toast.error("Failed to reactivate user");
-      }
+      toast.error(err instanceof Error ? err.message : "Failed to reactivate user");
     } finally {
       setBusy(false);
     }
@@ -452,8 +444,8 @@ function UsersInner() {
   const [search, setSearch] = useState("");
   const [deactivateTarget, setDeactivateTarget] = useState<UserRecord | null>(null);
 
-  const { data: users, isLoading: usersLoading } = useSupabaseQueryCamel(supabaseQueries.listUsers);
-  const { data: currentUser } = useSupabaseQueryCamel(supabaseQueries.getCurrentUser);
+  const { data: users, isLoading: usersLoading } = useSupabaseQueryCamel<any[]>(supabaseQueries.listUsers);
+  const { data: currentUser } = useSupabaseQueryCamel<any>(supabaseQueries.getCurrentUser);
   const updateRole = useSupabaseMutation(supabaseMutations.updateUserRole);
   const toggleActive = useSupabaseMutation(supabaseMutations.toggleUserActive);
 
@@ -477,28 +469,20 @@ function UsersInner() {
 
   const handleQuickApprove = async (userId: string, role: UserRole) => {
     try {
-      await updateRole({ userId, role });
+      await updateRole.mutateAsync({ userId, role });
       toast.success(`User approved as ${ROLE_CONFIG[role].label}`);
     } catch (err) {
-      if (err instanceof ConvexError) {
-        toast.error((err.data as { message: string }).message);
-      } else {
-        toast.error("Failed to approve user");
-      }
+      toast.error(err instanceof Error ? err.message : "Failed to approve user");
     }
   };
 
   const handleConfirmDeactivate = async () => {
     if (!deactivateTarget) return;
     try {
-      await toggleActive({ userId: deactivateTarget.id });
+      await toggleActive.mutateAsync({ userId: deactivateTarget.id, isActive: false });
       toast.success(`${deactivateTarget.name ?? "User"} deactivated`);
     } catch (err) {
-      if (err instanceof ConvexError) {
-        toast.error((err.data as { message: string }).message);
-      } else {
-        toast.error("Failed to deactivate user");
-      }
+      toast.error(err instanceof Error ? err.message : "Failed to deactivate user");
     }
     setDeactivateTarget(null);
   };

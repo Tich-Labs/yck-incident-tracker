@@ -55,7 +55,7 @@ function AppLayoutInner() {
   const { lng } = useParams<{ lng: string }>();
   const { t } = useTranslation("common");
   const [mobileOpen, setMobileOpen] = useState(false);
-  const { data: user } = useSupabaseQueryCamel(supabaseQueries.getCurrentUser);
+  const { data: user } = useSupabaseQueryCamel<any>(supabaseQueries.getCurrentUser);
   const { queueCount, deadCount, syncQueue } = useOfflineIncidentQueue();
 
   const visibleNav = navItems.filter((item) =>

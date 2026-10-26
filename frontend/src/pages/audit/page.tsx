@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/empty.tsx";
 import { cn } from "@/lib/utils.ts";
 import { format } from "date-fns";
-import { usePaginatedQuery } from "@/hooks/use-supabase-query";
+import { useSupabaseQueryCamel, supabaseQueries } from "@/hooks/use-supabase-query";
 import { Authenticated, Unauthenticated, AuthLoading } from "@/components/auth-components";
 import {
   ScrollText,
@@ -51,13 +51,12 @@ const STATUS_LABELS: Record<string, string> = {
 function AuditLogList() {
   const navigate = useNavigate();
   const { lng } = useParams<{ lng: string }>();
-  const { results, status, loadMore } = usePaginatedQuery(
-    null,
-    {},
-    { initialNumItems: 30 }
+  const { data: auditEntries, isLoading } = useSupabaseQueryCamel<any[]>(
+    supabaseQueries.listAuditLog
   );
+  const results = auditEntries ?? [];
 
-  if (status === "LoadingFirstPage") {
+  if (isLoading) {
     return (
       <div className="space-y-3 px-4">
         {Array.from({ length: 6 }).map((_, i) => (
@@ -90,7 +89,7 @@ function AuditLogList() {
 
             return (
               <button
-                key={entry._id}
+                key={entry.id}
                 onClick={() => navigate(`/${lng}/incidents/${entry.incidentId}`)}
                 className="w-full flex items-start gap-3 px-4 py-3 hover:bg-muted/50 transition-colors text-left cursor-pointer"
               >
@@ -138,13 +137,6 @@ function AuditLogList() {
         </div>
       </Card>
 
-      {status === "CanLoadMore" && (
-        <div className="flex justify-center mt-4">
-          <Button variant="secondary" size="sm" onClick={() => loadMore(30)}>
-            Load more
-          </Button>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,16 +1,15 @@
 const CACHE_NAME = "yck-tracker-v1";
 const OFFLINE_QUEUE_KEY = "yck_offline_queue";
 
+// Paths are relative to the service worker scope so they work under the
+// /yck-incident-tracker/ base path on GitHub Pages as well as at "/".
+const SCOPE = self.registration ? self.registration.scope : self.location.href.replace(/sw\.js$/, "");
 const urlsToCache = [
-  "/",
-  "/incidents/safety",
-  "/incidents/new",
-  "/incidents/success",
-  "/referral",
-  "/icon/icon-192.png",
-  "/icon/icon-512.png",
-  "/site.webmanifest"
-];
+  "",
+  "icon/icon-192.png",
+  "icon/icon-512.png",
+  "site.webmanifest"
+].map((p) => new URL(p, SCOPE).href);
 
 // Install — cache core shell assets
 self.addEventListener("install", (event) => {
@@ -57,7 +56,7 @@ self.addEventListener("fetch", (event) => {
   // Navigation requests — serve app shell, fall back to cached "/"
   if (event.request.mode === "navigate") {
     event.respondWith(
-      fetch(event.request).catch(() => caches.match("/"))
+      fetch(event.request).catch(() => caches.match(SCOPE))
     );
     return;
   }
@@ -89,8 +88,8 @@ self.addEventListener("push", (event) => {
       if (!isAppInFocus) {
         return self.registration.showNotification(data.title ?? "YCK Tracker", {
           body: data.body ?? "You have a new notification.",
-          icon: "/icon/icon-192.png",
-          badge: "/icon/icon-192.png",
+          icon: new URL("icon/icon-192.png", SCOPE).href,
+          badge: new URL("icon/icon-192.png", SCOPE).href,
           ...data.options,
         });
       }
@@ -106,7 +105,7 @@ self.addEventListener("notificationclick", (event) => {
       for (const client of clientList) {
         if ("focus" in client) return client.focus();
       }
-      if (clients.openWindow) return clients.openWindow("/");
+      if (clients.openWindow) return clients.openWindow(SCOPE);
     })
   );
 });

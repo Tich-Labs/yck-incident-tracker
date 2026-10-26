@@ -495,7 +495,7 @@ function WorkflowPanel({
                 <ShieldAlert className="h-5 w-5 text-red-600 flex-shrink-0" />
                 <div>
                   <p className="text-sm font-semibold text-red-800">Escalate Incident</p>
-                  <p className="text-xs text-red-600">Mark as urgent — notifies senior staff</p>
+                  <p className="text-xs text-red-600">Flags the case for senior review</p>
                 </div>
               </button>
             )}
@@ -564,14 +564,14 @@ function WorkflowPanel({
 function IncidentDetailInner({ incidentId }: { incidentId: string }) {
   const navigate = useNavigate();
   const { lng } = useParams<{ lng: string }>();
-  const { data: incident } = useSupabaseQueryCamel(
+  const { data: incident } = useSupabaseQueryCamel<any>(
     async () => {
       if (await isDemoMode()) return DEMO_INCIDENTS.find(i => i.id === incidentId) ?? null;
       const { data } = await supabase.from('incidents').select('*').eq('id', incidentId).single();
       return data;
     }
   );
-  const { data: user } = useSupabaseQueryCamel(
+  const { data: user } = useSupabaseQueryCamel<any>(
     async () => {
       const { data: { user: authUser } } = await supabase.auth.getUser();
       if (!authUser) return null;
@@ -579,7 +579,7 @@ function IncidentDetailInner({ incidentId }: { incidentId: string }) {
       return data;
     }
   );
-  const { data: services } = useSupabaseQueryCamel(
+  const { data: services } = useSupabaseQueryCamel<any[]>(
     async () => {
       if (await isDemoMode()) return DEMO_SERVICES;
       const { data } = await supabase.from('referral_services').select('*').order('name');

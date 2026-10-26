@@ -1,7 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/lib/supabase'
 import { snakeToCamel } from '@/lib/supabase-utils'
-import { DEMO_INCIDENTS, DEMO_SERVICES, DEMO_USERS } from '@/lib/demo-data'
+import { DEMO_AUDIT_ENTRIES, DEMO_INCIDENTS, DEMO_SERVICES, DEMO_USERS } from '@/lib/demo-data'
 
 // True when there is no authenticated session — anonymous/demo viewers only.
 // Real signed-in users keep reading live data; demo data never replaces theirs.
@@ -127,6 +127,80 @@ export const supabaseQueries = {
     return data
   },
 
+  listAuditLog: async () => {
+    if (await isDemoMode()) return DEMO_AUDIT_ENTRIES
+    const { data, error } = await supabase
+      .from('audit_log')
+      .select('*')
+      .order('timestamp', { ascending: false })
+      .limit(100)
+    if (error) throw error
+    return data ?? []
+  },
+
+  getReports: async ({ from, to }: { from: string; to: string }) => {
+    const incidentDate = (row: any) =>
+      String(row.incidentDate ?? row.incident_date ?? '').slice(0, 10)
+
+    let rows: any[]
+    if (await isDemoMode()) {
+      rows = DEMO_INCIDENTS.map((i: any) => snakeToCamel(i))
+    } else {
+      const { data, error } = await supabase
+        .from('incidents')
+        .select('*')
+        .gte('incident_date', from)
+        .lte('incident_date', to)
+        .order('incident_date', { ascending: false })
+      if (error) throw error
+      rows = (data ?? []).map((row) => snakeToCamel(row))
+    }
+
+    const inRange = rows.filter((row) => {
+      const d = incidentDate(row)
+      return d !== '' && d >= from && d <= to
+    })
+
+    const tally = (pick: (row: any) => string) => {
+      const out: Record<string, number> = {}
+      for (const row of inRange) {
+        const key = pick(row)
+        if (!key) continue
+        out[key] = (out[key] ?? 0) + 1
+      }
+      return out
+    }
+
+    const byStatus = tally((r) => r.status ?? 'new')
+    const resolved = (byStatus.resolved ?? 0) + (byStatus.closed ?? 0)
+    const escalated =
+      byStatus.escalated ?? inRange.filter((r) => r.isEscalated).length
+
+    return {
+      total: inRange.length,
+      escalated,
+      resolved,
+      byType: tally((r) => r.incidentType ?? 'other'),
+      byStatus,
+      byAgeGroup: tally((r) => r.survivorAgeGroup ?? 'unknown'),
+      byGender: tally((r) => r.survivorGender ?? 'prefer_not_to_say'),
+      byMonth: tally((r) => incidentDate(r).slice(0, 7)),
+      exportRows: inRange.map((r) => ({
+        ref: String(r.id ?? '').slice(-8).toUpperCase(),
+        incidentDate: incidentDate(r),
+        incidentTime: r.incidentTime ?? '',
+        incidentType: r.incidentType ?? 'other',
+        location: r.location ?? '',
+        survivorAgeGroup: r.survivorAgeGroup ?? 'unknown',
+        survivorGender: r.survivorGender ?? 'prefer_not_to_say',
+        status: r.status ?? 'new',
+        isEscalated: !!r.isEscalated,
+        escalatedAt: r.escalatedAt ?? '',
+        resolvedAt: r.resolvedAt ?? '',
+      })),
+    }
+  },
+
   getNewIncidents: async () => {
     if (await isDemoMode()) return DEMO_INCIDENTS.filter(i => i.status === 'new').slice(0, 5)
     const { data, error } = await supabase
@@ -152,7 +226,7 @@ export function usePaginatedQuery(name: any, args?: any, opts?: any) {
 export const supabaseMutations = {
   createService: async (service: any) => {
     const { data, error } = await supabase
-      .from('referralServices')
+      .from('referral_services')
       .insert(service)
       .select()
       .single()
@@ -160,10 +234,12 @@ export const supabaseMutations = {
     return data
   },
   
-  updateService: async ({ id, ...updates }: any) => {
+  updateService: async ({ id, isActive, ...updates }: any) => {
+    const patch: Record<string, unknown> = { ...updates }
+    if (isActive !== undefined) patch.is_active = isActive
     const { data, error } = await supabase
-      .from('referralServices')
-      .update(updates)
+      .from('referral_services')
+      .update(patch)
       .eq('id', id)
       .select()
       .single()
@@ -173,7 +249,7 @@ export const supabaseMutations = {
   
   deleteService: async (id: string) => {
     const { error } = await supabase
-      .from('referralServices')
+      .from('referral_services')
       .delete()
       .eq('id', id)
     if (error) throw error
@@ -193,7 +269,7 @@ export const supabaseMutations = {
   toggleUserActive: async ({ userId, isActive }: { userId: string; isActive: boolean }) => {
     const { data, error } = await supabase
       .from('users')
-      .update({ isActive })
+      .update({ is_active: isActive })
       .eq('id', userId)
       .select()
       .single()

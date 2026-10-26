@@ -176,9 +176,9 @@ function IncidentListInner() {
   const [statusFilter, setStatusFilter] = useState<StatusFilter>("all");
   const [reporterFilter, setReporterFilter] = useState<ReporterFilter>("all");
 
-  const { data: results, status } = useSupabaseQueryCamel(supabaseQueries.listIncidents);
+  const { data: results, status } = useSupabaseQueryCamel<any[]>(supabaseQueries.listIncidents);
 
-  const { data: user } = useSupabaseQueryCamel(supabaseQueries.listUsers);
+  const { data: user } = useSupabaseQueryCamel<any>(supabaseQueries.getCurrentUser);
 
   const filtered = (results || []).filter((incident: any) => {
     if (statusFilter !== "all" && incident.status !== statusFilter) return false;
