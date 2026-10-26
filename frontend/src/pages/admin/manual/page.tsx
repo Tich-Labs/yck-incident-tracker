@@ -74,7 +74,7 @@ const SECTIONS: { id: SectionId; label: string; icon: React.ElementType }[] = [
   { id: "reports", label: "Reports & Export", icon: BarChart2 },
   { id: "privacy", label: "Privacy & Safety", icon: ShieldCheck },
   { id: "audit-log", label: "Audit Log", icon: Eye },
-  { id: "emails", label: "Email Notifications", icon: Mail },
+  { id: "emails", label: "Notifications", icon: Mail },
   { id: "offline", label: "Offline Mode", icon: WifiOff },
   { id: "architecture", label: "Architecture", icon: Database },
   { id: "roadmap", label: "Roadmap", icon: Map },
@@ -368,20 +368,20 @@ function SectionSuperAdminSetup() {
         Microsoft, or email account. Your account will be created with a <CodeChip>pending</CodeChip> role.
       </Step>
 
-      <Step number={2} title="Open the Hercules App Builder">
-        The person who built this app (your technical administrator) needs to open the app in the
-        Hercules platform and click on the <strong>Database</strong> tab in the left sidebar.
+      <Step number={2} title="Open the Supabase dashboard">
+        Your technical administrator opens the project in the Supabase dashboard and goes to the
+        <strong> Table Editor</strong>.
       </Step>
 
       <Step number={3} title="Find your user record">
-        In the Database tab, select the <CodeChip>users</CodeChip> table. Find your entry — it will
+        Select the <CodeChip>users</CodeChip> table. Find your entry — it will
         show your name/email and <CodeChip>role: "pending"</CodeChip>.
       </Step>
 
       <Step number={4} title="Update your role">
         Double-click the <CodeChip>role</CodeChip> cell and change it from{" "}
         <CodeChip>pending</CodeChip> to <CodeChip>executive_director</CodeChip>. Press Enter to save.
-        Also confirm <CodeChip>isActive</CodeChip> is set to <CodeChip>true</CodeChip>.
+        Also confirm <CodeChip>is_active</CodeChip> is set to <CodeChip>true</CodeChip>.
       </Step>
 
       <Step number={5} title="Refresh the app">
@@ -637,7 +637,7 @@ function SectionIncidents() {
       <p className="text-sm text-muted-foreground leading-relaxed mb-4">
         Only <strong>Program Leads</strong> and <strong>Executive Directors</strong> can assign
         incidents. Open the incident, scroll to the <em>Assignment</em> section, select a Counselor
-        from the dropdown, and click Assign. The Counselor will receive an email notification.
+        from the dropdown, and click Assign. The incident then appears under that Counselor's assigned cases.
       </p>
 
       <h3 className="text-sm font-semibold mb-3">Escalating an incident</h3>
@@ -648,7 +648,7 @@ function SectionIncidents() {
       <ul className="space-y-1.5 mb-5">
         {[
           "Sets the status to 'Escalated'",
-          "Sends an email alert to all Program Leads and Executive Directors",
+          "Records the escalation in the audit log and shows a red alert to staff",
           "Marks the incident with a red alert indicator across all views",
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
@@ -889,37 +889,36 @@ function SectionAuditLog() {
   );
 }
 
-// ─── Section: Email Notifications ────────────────────────────────────────────
+// ─── Section: Notifications ─────────────────────────────────────────────────
 
 function SectionEmails() {
   return (
     <div>
-      <SectionHeading icon={Mail} title="Email Notifications" subtitle="Automated alerts for incidents" />
+      <SectionHeading icon={Mail} title="Notifications" subtitle="What happens when a case moves" />
 
       <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-        The system sends automated email notifications at key moments in the incident
-        lifecycle. These help ensure timely responses and keep senior staff informed.
+        This build does not send email, SMS or push notifications. Staff see changes in the app,
+        and every action is written to the audit log. Email notifications are planned, not live.
       </p>
 
-      <h3 className="text-sm font-semibold mb-3">When emails are sent</h3>
+      <h3 className="text-sm font-semibold mb-3">Where staff see a change today</h3>
       <div className="rounded-xl border border-border overflow-hidden mb-5">
         {[
-          { label: "New incident", desc: "All Program Leads and Executive Directors are notified when a new incident is submitted" },
-          { label: "Assignment", desc: "The assigned Counselor receives a notification with incident details" },
-          { label: "Escalation", desc: "All Program Leads and Executive Directors receive an urgent alert" },
-          { label: "Confirmation", desc: "If an anonymous reporter provides an email, they receive a brief confirmation" },
+          { label: "New incident", desc: "Appears on the Dashboard and the Incidents list immediately" },
+          { label: "Assignment", desc: "Shows up under that Counselor's assigned cases" },
+          { label: "Escalation", desc: "Status changes to Escalated and a red indicator appears across views" },
+          { label: "Reporter confirmation", desc: "The reference number is shown on the success screen so the reporter can keep it" },
         ].map(({ label, desc }) => (
           <PermRow key={label} label={label}>{desc}</PermRow>
         ))}
       </div>
 
-      <h3 className="text-sm font-semibold mb-3">Email content rules</h3>
+      <h3 className="text-sm font-semibold mb-3">Accountability</h3>
       <ul className="space-y-1.5 mb-5">
         {[
-          "Emails never contain full incident details — just enough to prompt action",
-          "No survivor PII (names, locations) is included in email bodies",
-          "Emails contain a direct link to the incident within the secure app",
-          "All emails are sent from the Hercules platform email system",
+          "Every submission, status change, assignment, note and escalation is recorded in the audit log",
+          "The audit log records who performed each action and when",
+          "Supervisors can review the audit log to confirm a case was actioned",
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
             <CheckCircle2 className="h-3.5 w-3.5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -928,10 +927,9 @@ function SectionEmails() {
         ))}
       </ul>
 
-      <InfoBox variant="warn">
-        If staff are not receiving emails, ask them to check their spam/junk folder. The
-        technical administrator can verify email configuration in the Hercules platform
-        settings.
+      <InfoBox variant="info">
+        Email notifications are on the roadmap. Until they are enabled, agree a manual escalation
+        channel with your team (for example a phone call to the Program Lead on duty).
       </InfoBox>
     </div>
   );
@@ -954,11 +952,11 @@ function SectionArchitecture() {
       <div className="rounded-xl border border-border overflow-hidden mb-5">
         {[
           { label: "Frontend", desc: "React web application — works in any modern browser (Chrome, Safari, Firefox, Edge)" },
-          { label: "Backend", desc: "Hercules Backend (Convex) — real-time serverless functions" },
-          { label: "Database", desc: "Hercules Database — document-based, real-time, fully managed" },
-          { label: "Authentication", desc: "Hercules Auth — Google, Microsoft, or email OTP sign-in" },
-          { label: "Email", desc: "Hercules Email — managed sending for notifications" },
-          { label: "Hosting", desc: "Hercules Cloud — globally distributed, auto-scaling" },
+          { label: "Backend", desc: "Supabase (PostgreSQL) — database, authentication and row-level security" },
+          { label: "Database", desc: "Supabase PostgreSQL — relational tables with row-level security policies" },
+          { label: "Authentication", desc: "Supabase Auth — email sign-in for staff accounts" },
+          { label: "Email", desc: "Not enabled in this build" },
+          { label: "Hosting", desc: "GitHub Pages, deployed by GitHub Actions" },
           { label: "Offline", desc: "Progressive Web App (PWA) with service worker + local queue" },
         ].map(({ label, desc }) => (
           <PermRow key={label} label={label}>{desc}</PermRow>
@@ -969,11 +967,11 @@ function SectionArchitecture() {
       <div className="flex flex-col gap-0 text-sm mb-5">
         {[
           "User submits form in browser (or offline — saved to device)",
-          "Data is sent to Hercules Backend via secure WebSocket connection",
-          "Backend validates data and writes to Hercules Database",
+          "Data is sent to Supabase over HTTPS",
+          "Row-level security checks the session and the record is written to PostgreSQL",
           "Audit log entry is written automatically",
-          "Email notifications are triggered via Hercules Email",
-          "All connected clients update in real-time via reactive subscriptions",
+          "No email is sent in this build",
+          "Other staff see the change on their next page load or refresh",
         ].map((step, i) => (
           <div key={i} className="flex items-start gap-2 py-2 border-b border-border last:border-0">
             <span className="w-5 h-5 rounded-full bg-muted border border-border flex items-center justify-center text-[10px] font-bold flex-shrink-0 mt-0.5">
@@ -989,7 +987,7 @@ function SectionArchitecture() {
         {[
           { label: "users", desc: "Staff accounts with roles, email, and status" },
           { label: "incidents", desc: "All reported incidents with category, status, location, and survivor demographics" },
-          { label: "auditLog", desc: "Immutable record of all system actions" },
+          { label: "audit_log", desc: "Record of system actions with the acting user and timestamp" },
         ].map(({ label, desc }) => (
           <PermRow key={label} label={label}>
             <span><CodeChip>{label}</CodeChip> — {desc}</span>
@@ -1000,12 +998,12 @@ function SectionArchitecture() {
       <h3 className="text-sm font-semibold mb-3">Security measures</h3>
       <ul className="space-y-1.5 mb-5">
         {[
-          "All data in transit is encrypted with TLS 1.3",
+          "All data in transit is encrypted with TLS",
           "Database access requires valid authentication tokens",
-          "Role-based access control on every backend function",
-          "No raw SQL or direct database access from the frontend",
-          "Session tokens expire automatically after inactivity",
-          "Quick Exit clears session data from the browser",
+          "Row-level security policies on every table",
+          "The browser only uses the public Supabase key; row-level security decides what it can read",
+          "Staff sign in with Supabase Auth; sessions can be revoked from the dashboard",
+          "Quick Exit clears session storage and leaves the site",
         ].map((item, i) => (
           <li key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
             <Lock className="h-3.5 w-3.5 text-primary flex-shrink-0 mt-0.5" />
@@ -1016,7 +1014,7 @@ function SectionArchitecture() {
 
       <InfoBox variant="info">
         The platform is fully managed — no server maintenance, patching, or backups are
-        required from your team. Hercules Cloud handles all infrastructure automatically.
+        required from your team. Supabase handles the database, and GitHub Pages serves the app.
       </InfoBox>
     </div>
   );
@@ -1114,7 +1112,7 @@ const ROADMAP_PHASES: {
       { feature: "Fix label maps for new categories", priority: "Critical", dependencies: "None", complexity: "Low", safetyNotes: "Prevents confusion in reports", status: "done" },
       { feature: "Add anonymous status lookup page", priority: "High", dependencies: "None", complexity: "Medium", safetyNotes: "Let reporters check case status with their reference code", status: "planned" },
       { feature: "Formal audit_log table", priority: "High", dependencies: "Schema change", complexity: "Medium", safetyNotes: "Required for accountability", status: "done" },
-      { feature: "Update email templates with new categories", priority: "Medium", dependencies: "None", complexity: "Low", safetyNotes: "Prevents misleading notifications", status: "done" },
+      { feature: "Email notifications for assignment and escalation", priority: "High", dependencies: "Supabase Edge Functions + email provider", complexity: "Medium", safetyNotes: "Never include survivor details in an email body", status: "planned" },
     ],
   },
   {
@@ -1134,9 +1132,9 @@ const ROADMAP_PHASES: {
     title: "AI Referral Layer",
     timeline: "3-5 days",
     items: [
-      { feature: "AI risk/severity scoring", priority: "Critical", dependencies: "Hercules AI Gateway", complexity: "High", safetyNotes: "Must have human review", status: "planned" },
+      { feature: "AI risk/severity scoring", priority: "Critical", dependencies: "MCP server (optional)", complexity: "High", safetyNotes: "Must have human review", status: "planned" },
       { feature: "AI-powered service matching", priority: "Critical", dependencies: "Services DB, AI Gateway", complexity: "High", safetyNotes: "Never auto-refer without human approval", status: "planned" },
-      { feature: "Human oversight approval UI", priority: "Critical", dependencies: "AI scoring", complexity: "Medium", safetyNotes: "All AI suggestions require staff confirmation", status: "planned" },
+      { feature: "Persist staff approval of AI suggestions", priority: "Critical", dependencies: "AI scoring", complexity: "Medium", safetyNotes: "Approvals are currently client-side only", status: "planned" },
       { feature: "Location-based recommendations", priority: "High", dependencies: "Services DB, geolocation", complexity: "Medium", safetyNotes: "Don't expose survivor location", status: "planned" },
       { feature: "AI confidence indicators", priority: "Medium", dependencies: "AI scoring", complexity: "Low", safetyNotes: "Helps staff trust/evaluate AI", status: "planned" },
     ],
@@ -1631,6 +1629,38 @@ function SectionDemoWalkthrough() {
 
 // ─── Section: AI Assistant ────────────────────────────────────────────────────
 
+function SectionAiAssistant() {
+  return (
+    <div>
+      <SectionHeading icon={Sparkles} title="AI Assistant" subtitle="Optional helper for referral matching and risk scoring" />
+
+      <p className="text-sm text-muted-foreground leading-relaxed mb-5">
+        The AI Assistant is a floating panel available on admin pages. It calls the MCP server to
+        suggest referral services, score incident risk, and generate FHIR bundles. Its output is a
+        suggestion only: staff review it and decide what to do.
+      </p>
+
+      <h3 className="text-sm font-semibold mb-3">Tools</h3>
+      <div className="rounded-xl border border-border overflow-hidden mb-5">
+        {[
+          { label: "Find Services", desc: "Matches an incident type and location to referral services, with relevance scores and reasoning" },
+          { label: "Assess Risk", desc: "Scores severity from 0 to 100 with contributing factors and recommended actions" },
+          { label: "FHIR Bundle", desc: "Generates an FHIR R4 bundle for linkage to a health information system" },
+        ].map(({ label, desc }) => (
+          <PermRow key={label} label={label}>{desc}</PermRow>
+        ))}
+      </div>
+
+      <h3 className="text-sm font-semibold mb-3">Limitations</h3>
+      <ul className="text-sm text-muted-foreground leading-relaxed list-disc pl-5 space-y-1 mb-5">
+        <li>Requires the MCP server to be running and configured. Without it, the panel reports an error.</li>
+        <li>Scoring falls back to rule-based logic when no AI provider is configured.</li>
+        <li>Nothing is referred or changed automatically. Staff confirm every suggestion.</li>
+      </ul>
+    </div>
+  );
+}
+
 function SectionSupport() {
   return (
     <div>
@@ -1656,15 +1686,13 @@ function SectionSupport() {
           dates are inclusive. If still empty, ensure there are incidents logged in that period
           by checking the Incidents page.
         </Collapsible>
-        <Collapsible title="Email notifications are not being received">
-          Check the spam/junk folder. Emails are sent from the Hercules platform. Ask your
-          technical administrator to verify the email configuration in the Hercules backend
-          settings.
+        <Collapsible title="I expected an email notification">
+          This build does not send emails. Assignments and escalations appear in the app, and every
+          action is recorded in the Audit Log. Email notifications are planned, not live.
         </Collapsible>
         <Collapsible title="I accidentally deactivated an Executive Director and am now locked out">
-          Your technical administrator can directly update the user record in the Hercules
-          Database tab — set <CodeChip>isActive</CodeChip> to <CodeChip>true</CodeChip> on the
-          affected user.
+          Your technical administrator can update the user record in the Supabase Table Editor —
+          set <CodeChip>is_active</CodeChip> to <CodeChip>true</CodeChip> on the affected user.
         </Collapsible>
       </div>
 
@@ -1676,7 +1704,7 @@ function SectionSupport() {
         <p className="text-sm text-muted-foreground leading-relaxed">
           For issues that cannot be resolved within the app — including database changes,
           environment variables, email provider setup, or deployment — contact the person who
-          built and manages this application in the Hercules platform.
+          built and manages this application (Supabase project, GitHub repository and deployment).
         </p>
       </div>
     </div>

@@ -6,22 +6,25 @@ A trauma-informed, offline-capable Progressive Web App for Youth Changers Kenya 
 
 **Live app**: https://tich-labs.github.io/yck-incident-tracker/
 **Interactive guide**: https://tich-labs.github.io/yck-incident-tracker/docs/
-**Agent card (A2A)**: https://tich-labs.github.io/yck-incident-tracker/docs/agent-card.json\
-**MCP server**: https://yck-incident-tracker-production.up.railway.app/
+**Agent card (A2A)**: https://tich-labs.github.io/yck-incident-tracker/docs/agent-card.json
+**MCP server**: not currently reachable. The Railway deployment (`yck-incident-tracker-production.up.railway.app`) returns "Application not found" and needs redeploying. See [ISSUES.md](ISSUES.md).
 
 ## Features
 
-- **Offline-first PWA** — works without internet; queues submissions for sync. Install prompt surfaces only on incident tracker and find help pages (not admin)
-- **SGBV Incident Logging** — structured, trauma-informed intake forms with three reporter types (self, on behalf, volunteer)
+- **Offline-first PWA** — works without internet; queues submissions locally and auto-syncs when back online. Install prompt surfaces on survivor-facing routes (not admin)
+- **SGBV Incident Logging** — structured, trauma-informed 5-step intake form with three reporter types (self, on behalf, volunteer with unique Volunteer ID)
+- **Anonymous Reporting** — the incident record stores age group and gender, not a survivor name. A reference code built from initials and birth month/year is shown once to the reporter but is not stored. An optional contact can be added for follow-up
 - **AI Referral Matching** — matches incidents to verified local services (health, police, shelter, psychosocial, legal)
-- **Risk Assessment** — automated severity scoring with human oversight
-- **FHIR R4 Export** — generates interoperable health bundles (Observation, Patient, Consent, ServiceRequest)
+- **Risk Assessment** — rule-based severity scoring (0–100) with human oversight; an optional AI path uses the MCP server
+- **Referral Directory** — searchable directory of verified service providers across Kakamega & Vihiga
+- **Role-Based Access Control** — five roles (volunteer, counselor, program lead, executive director, pending) enforced via Supabase Row Level Security
+- **Reports & Analytics** — charts by incident type, status, age group, gender, and month with anonymized CSV export
+- **FHIR R4 Export** — interoperable health bundles (Observation, Patient, Consent, Location, ServiceRequest)
 - **MCP Server** — exposes tools for AI clients (Prompt Opinion, Claude Desktop, MCP Inspector)
 - **A2A Agent Card** — published for multi-agent orchestration on Prompt Opinion platform
+- **Quick Exit** — one-tap safety button that clears session storage and redirects to a neutral site
 - **Multilingual** — English and Swahili
 - **Audit Log** — full action history for accountability
-- **Anonymous Reporting** — reference code system, no PII collected
-- **Reporter Types** — three options per submission: Self (survivor), On Behalf of Survivor (relative/friend), Volunteer (unique Volunteer ID for field workers without accounts)
 
 ## AI Assistant (In-App)
 
@@ -52,11 +55,11 @@ When a responder reports an incident in the app, a Prompt Opinion AI agent can a
 
 | Setting | Value |
 |---------|-------|
-| URL | `https://yck-incident-tracker-production.up.railway.app/` |
+| URL | `https://yck-incident-tracker-production.up.railway.app/` (currently unreachable, see note above) |
 | Transport | Streamable HTTP |
 | Auth | API Key |
 | Header | `X-API-Key` |
-| Value | `yck-dev-key-2026` |
+| Value | your MCP API key (stored as `VITE_MCP_API_KEY` / the server env var, never committed) |
 
 When prompted about the FHIR extension, enable it and grant the scopes (Observation, Patient, ServiceRequest, Consent, Location) — these allow the server's FHIR bundle tool to optionally write records to a connected EHR.
 
@@ -78,8 +81,8 @@ When prompted about the FHIR extension, enable it and grant the scopes (Observat
 ├── frontend/          # React + Vite PWA (TypeScript)
 ├── mcp-server/        # Model Context Protocol server (Railway)
 ├── supabase/          # Database schema and seed data (Kakamega & Vihiga)
-├── db_export/         # Exported data snapshots
 ├── docs/              # A2A agent card, system prompt, screenshots, journey guide
+├── guide/             # Standalone interactive user-journey guide
 ├── scripts/           # One-off utility scripts
 └── .github/workflows/ # CI/CD pipelines
 ```
@@ -140,7 +143,7 @@ The app deploys automatically to GitHub Pages on push to `main`.
 
 Set these in **Settings → Secrets and variables → Actions**, then enable GitHub Pages under **Settings → Pages → Source: GitHub Actions**.
 
-The MCP server is deployed separately on Railway at https://yck-incident-tracker-production.up.railway.app/.
+The MCP server was deployed on Railway at `yck-incident-tracker-production.up.railway.app`. That deployment is currently not reachable (returns "Application not found"), so the AI features and the in-app AI Assistant will not work until it is redeployed. Update the URL here once the new deployment is live.
 
 ## MCP Tools
 
@@ -164,7 +167,7 @@ Optional: `GROQ_MODEL`, `OLLAMA_MODEL`, `OPENAI_MODEL` to override defaults. Fal
 
 ## Interactive User Journey
 
-See the full walkthrough with screenshots at:\
+See the full walkthrough with screenshots at:
 https://tich-labs.github.io/yck-incident-tracker/docs/
 
 Covers both the **Survivor Journey** (safety gate → reporter type → 5-step incident form → success page) and the **Admin Journey** (dashboard → incidents → reports → user management → services → manual).
