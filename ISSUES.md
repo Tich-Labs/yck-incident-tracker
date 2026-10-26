@@ -76,7 +76,7 @@ The reference code is built from initials and birth month and year. The app does
 
 | ID | Issue | Status |
 |----|-------|--------|
-| X-01 | Railway MCP server `https://yck-incident-tracker-production.up.railway.app/` returns HTTP 404 "Application not found". README listed it as live. Service is deleted, suspended, or its domain was removed. The AI Assistant, risk scoring via MCP, and referral matching via MCP depend on it | Open. README updated to say unreachable. Redeploy `mcp-server/` (`railway.toml`, start command `npm run start:http`) and restore the URL |
+| X-01 | Railway MCP server `https://yck-incident-tracker-production.up.railway.app/` returns HTTP 404 "Application not found". README listed it as live. Service is deleted, suspended, or its domain was removed. The AI Assistant, risk scoring via MCP, and referral matching via MCP depend on it | Closed by decision: Railway is not used. README now states the MCP server is self-hosted only. The AI Assistant button is hidden unless `VITE_MCP_SERVER_URL` and `VITE_MCP_API_KEY` are set. Remove the dead URL from the GitHub Actions secrets |
 | X-02 | README documents a plaintext MCP API key (`yck-dev-key-2026`) under "Adding the MCP server to Prompt Opinion" | Open. Rotate the key on any deployment and remove it from the README |
 
 ## Housekeeping
@@ -85,7 +85,7 @@ The reference code is built from initials and birth month and year. The app does
 |----|-------|--------|
 | H-01 | EOI materials (`eoi/`, `EOI-SHOWCASE.md`, `eoi-site/`) are still in this repo. The public copy of `eoi-site/index.html` remains in git history with the older budget | Open. Backup is in `../eoi-materials/`. Removing from history needs a force push and is a separate decision |
 | H-02 | Uncommitted changes on `main`: `README.md`, `BUGS.md`, `ISSUES.md`, `frontend/public/sw.js`, `frontend/src/hooks/use-supabase-query.ts`, `frontend/src/lib/demo-data.ts`, `frontend/src/pages/{users,referral,reports,audit}/page.tsx`, `frontend/src/pages/admin/{manual,services}/page.tsx`, `frontend/src/pages/incidents/{page,detail/page}.tsx`, `frontend/src/pages/app/_components/AppLayout.tsx`, plus deleted `pages/admin/services/AdminServicesInner.tsx` and the EOI files | Open (commit and push after review) |
-| H-03 | Two open PRs from May 2026 ("Document branch changes…" on `google-hackathon-2026`, and a Railway deploy fix) | Needs triage |
+| H-03 | Two open PRs from May 2026 ("Document branch changes…" on `google-hackathon-2026`, and a Railway deploy fix) | Needs triage. The Railway PR can be closed now that Railway is not used |
 | H-04 | Repo description is empty | Open |
 | H-05 | Dependencies not installed; build/lint not run after the local fixes | Done: `npm install`, `tsc --noEmit` clean, lint 0 errors, build passes |
 

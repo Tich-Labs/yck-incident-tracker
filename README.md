@@ -7,7 +7,7 @@ A trauma-informed, offline-capable Progressive Web App for Youth Changers Kenya 
 **Live app**: https://tich-labs.github.io/yck-incident-tracker/
 **Interactive guide**: https://tich-labs.github.io/yck-incident-tracker/docs/
 **Agent card (A2A)**: https://tich-labs.github.io/yck-incident-tracker/docs/agent-card.json
-**MCP server**: not currently reachable. The Railway deployment (`yck-incident-tracker-production.up.railway.app`) returns "Application not found" and needs redeploying. See [ISSUES.md](ISSUES.md).
+**MCP server**: not hosted. There is no public deployment; run `mcp-server/` locally or self-host it. The in-app AI Assistant and the AI risk/referral paths need a reachable MCP endpoint, so leave `VITE_MCP_SERVER_URL` unset if you are not running one. See [ISSUES.md](ISSUES.md).
 
 ## Features
 
@@ -55,7 +55,7 @@ When a responder reports an incident in the app, a Prompt Opinion AI agent can a
 
 | Setting | Value |
 |---------|-------|
-| URL | `https://yck-incident-tracker-production.up.railway.app/` (currently unreachable, see note above) |
+| URL | your self-hosted server, e.g. `http://localhost:3001/` for local testing |
 | Transport | Streamable HTTP |
 | Auth | API Key |
 | Header | `X-API-Key` |
@@ -79,7 +79,7 @@ When prompted about the FHIR extension, enable it and grant the scopes (Observat
 
 ```
 ├── frontend/          # React + Vite PWA (TypeScript)
-├── mcp-server/        # Model Context Protocol server (Railway)
+├── mcp-server/        # Model Context Protocol server (self-hosted)
 ├── supabase/          # Database schema and seed data (Kakamega & Vihiga)
 ├── docs/              # A2A agent card, system prompt, screenshots, journey guide
 ├── guide/             # Standalone interactive user-journey guide
@@ -128,8 +128,11 @@ cd mcp-server
 cp .env.example .env
 # Add your credentials
 npm install
-npm run dev
+npm run dev          # stdio transport, for Claude Desktop and MCP Inspector
+npm run start:http   # Streamable HTTP on port 3001, for Prompt Opinion
 ```
+
+There is no hosted deployment. If you want the in-app AI Assistant to work in production, self-host the server and point `VITE_MCP_SERVER_URL` at it.
 
 ## Deployment
 
@@ -138,12 +141,12 @@ The app deploys automatically to GitHub Pages on push to `main`.
 **Required GitHub secrets:**
 - `VITE_SUPABASE_URL`
 - `VITE_SUPABASE_ANON_KEY`
-- `VITE_MCP_SERVER_URL` — `https://yck-incident-tracker-production.up.railway.app/`
+- `VITE_MCP_SERVER_URL` — optional; the URL of a self-hosted MCP server (omit if you are not running one)
 - `VITE_MCP_API_KEY` — your MCP API key
 
 Set these in **Settings → Secrets and variables → Actions**, then enable GitHub Pages under **Settings → Pages → Source: GitHub Actions**.
 
-The MCP server was deployed on Railway at `yck-incident-tracker-production.up.railway.app`. That deployment is currently not reachable (returns "Application not found"), so the AI features and the in-app AI Assistant will not work until it is redeployed. Update the URL here once the new deployment is live.
+Railway is not used. No hosted MCP server is maintained, so the in-app AI Assistant and the AI risk/referral paths stay inactive until you self-host `mcp-server/` and set `VITE_MCP_SERVER_URL`. The rule-based risk score and the referral directory work without it.
 
 ## MCP Tools
 

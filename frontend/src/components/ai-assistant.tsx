@@ -299,7 +299,7 @@ export default function AiAssistant() {
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
             <SheetTitle className="text-sm">AI Assistant</SheetTitle>
-            <Badge variant="secondary" className="text-[10px] ml-auto">MCP Connected</Badge>
+            <Badge variant="secondary" className="text-[10px] ml-auto">MCP</Badge>
           </div>
           <p className="text-xs text-muted-foreground">
             Call MCP tools to find services, assess risk, or generate FHIR bundles

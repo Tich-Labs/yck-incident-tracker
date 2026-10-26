@@ -1635,7 +1635,7 @@ function SectionAiAssistant() {
       <SectionHeading icon={Sparkles} title="AI Assistant" subtitle="Optional helper for referral matching and risk scoring" />
 
       <p className="text-sm text-muted-foreground leading-relaxed mb-5">
-        The AI Assistant is a floating panel available on admin pages. It calls the MCP server to
+        When an MCP server is configured, the AI Assistant appears as a floating panel on admin pages. It calls that server to
         suggest referral services, score incident risk, and generate FHIR bundles. Its output is a
         suggestion only: staff review it and decide what to do.
       </p>
@@ -1653,7 +1653,7 @@ function SectionAiAssistant() {
 
       <h3 className="text-sm font-semibold mb-3">Limitations</h3>
       <ul className="text-sm text-muted-foreground leading-relaxed list-disc pl-5 space-y-1 mb-5">
-        <li>Requires the MCP server to be running and configured. Without it, the panel reports an error.</li>
+        <li>Requires a self-hosted MCP server. When `VITE_MCP_SERVER_URL` is not set, the button is hidden.</li>
         <li>Scoring falls back to rule-based logic when no AI provider is configured.</li>
         <li>Nothing is referred or changed automatically. Staff confirm every suggestion.</li>
       </ul>

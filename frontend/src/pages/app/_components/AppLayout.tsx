@@ -9,6 +9,7 @@ import { OfflineBanner } from "@/components/offline-banner.tsx";
 import { InstallPrompt } from "@/components/install-prompt.tsx";
 import { useOfflineIncidentQueue } from "@/hooks/use-offline-incident-queue.ts";
 import AiAssistant from "@/components/ai-assistant";
+import { isMcpConfigured } from "@/lib/mcp-client";
 import { useSupabaseQueryCamel, supabaseQueries } from "@/hooks/use-supabase-query";
 import { useTranslation } from "react-i18next";
 import LocaleSwitcher from "@/components/locale-switcher.tsx";
@@ -210,7 +211,7 @@ function AppLayoutInner() {
       <InstallPrompt />
 
       {/* AI Assistant floating button */}
-      <AiAssistant />
+      {isMcpConfigured && <AiAssistant />}
     </div>
   );
 }

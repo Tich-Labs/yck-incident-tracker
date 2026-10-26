@@ -1,6 +1,8 @@
 const MCP_SERVER_URL = import.meta.env.VITE_MCP_SERVER_URL ?? "";
 const MCP_API_KEY = import.meta.env.VITE_MCP_API_KEY ?? "";
 
+export const isMcpConfigured = Boolean(MCP_SERVER_URL && MCP_API_KEY);
+
 interface McpResponse<T> {
   result?: T;
   error?: { code: number; message: string };
